@@ -3,6 +3,7 @@ Collection of file readers and writers for some of the Ark: Survival Evolved
 file types.
 """
 
+import random
 import utils
 
 from binary import BinaryStream
@@ -15,7 +16,6 @@ def read_pair(stream):
 
 def read_variable_data(stream):
   pair = read_pair(stream)
-  # print pair
   if pair[1] == 'FloatProperty':
     stream.readBytes(8)
     float_value = stream.readFloat()
@@ -30,6 +30,7 @@ def read_variable_data(stream):
     return (pair[0], array)
   return (None, None)
 
+
 class ArkCharacterSetting:
   """
   A Character preset/template that you can use when you create new
@@ -39,7 +40,14 @@ class ArkCharacterSetting:
     self.name = name
     self.header = {
       'version': 0,
-      'strings': []
+      'strings':
+        [
+          'PrimalCharacterSetting',
+          'PrimalCharacterSetting_%s' % int(random.random() * 10),
+          'SpawnUI_C_0',
+          'ShooterGameInstance_0',
+          'ShooterEngine_0',
+        ]
     }
     self.character_setting = {
       'BodyColorSliderValue': 0.0,
@@ -54,6 +62,7 @@ class ArkCharacterSetting:
     preset.name = utils.get_file_name(file_path)
     with open(file_path, 'rb') as ifile:
       stream = BinaryStream(ifile)
+      preset.header['strings'] = []
 
       # Header portion -----------------------------------
       preset.header['version'] = stream.readInt32()
@@ -74,7 +83,7 @@ class ArkCharacterSetting:
 
       # Start of Structured Data -------------------------
       read_pair(stream)
-      structprop_permutation_value = stream.readInt64()
+      struct_property_size = stream.readInt64()
       stream.readNullTerminatedString()
       while True:
         data = read_variable_data(stream)
@@ -85,3 +94,59 @@ class ArkCharacterSetting:
       # End of Structured Data ---------------------------
 
     return preset
+
+  def save_to_file(self, file_path):
+    with open(file_path, 'wb') as ofile:
+      stream = BinaryStream(ofile)
+      # Start of Header ----------------------------------
+      stream.writeChar(1)
+      stream.writeBytesWith(19, 0)
+      stream.writeNullTerminatedString(self.header['strings'][0])
+      stream.writeInt32(1)
+      stream.writeInt32(4)
+      for i in xrange(1, len(self.header['strings'])):
+        stream.writeNullTerminatedString(self.header['strings'][i])
+      stream.writeBytesWith(12, 0)
+      stream.writeInt64(166)
+      # End of Header ------------------------------------
+
+      # Start of Structured Data -------------------------
+      slider_names = [
+        'BodyColorSliderValue',
+        'HairColorSliderValue',
+        'EyeColorSliderValue',
+        'BoneModifierSliderValues'
+      ]
+      struct_size = 174
+      if self.character_setting['BodyColorSliderValue'] != 0.0:
+        struct_size += 55
+      if self.character_setting['HairColorSliderValue'] != 0.0:
+        struct_size += 55
+      if self.character_setting['EyeColorSliderValue'] != 0.0:
+        struct_size += 54
+
+      stream.writeNullTerminatedString('CharacterSetting')
+      stream.writeNullTerminatedString('StructProperty')
+      stream.writeInt64(struct_size)
+      stream.writeNullTerminatedString('CharacterPreset')
+
+      for name in slider_names:
+        if self.character_setting[name] != 0.0:
+          stream.writeNullTerminatedString(name)
+          if name != slider_names[3]:
+            stream.writeNullTerminatedString('FloatProperty')
+            stream.writeInt64(4)
+            stream.writeFloat(self.character_setting[name])
+          else:
+            stream.writeNullTerminatedString('ArrayProperty')
+            stream.writeInt64(92)
+            stream.writeNullTerminatedString('FloatProperty')
+            length = len(self.character_setting[name])
+            stream.writeInt32(length)
+            for f in self.character_setting[name]:
+              stream.writeFloat(f)
+
+      stream.writeNullTerminatedString('None')
+      stream.writeNullTerminatedString('None')
+      stream.writeInt32(0)
+      # End of Structured Data ---------------------------

@@ -90,6 +90,10 @@ class BinaryStream:
     def writeBytes(self, value):
         self.base_stream.write(value)
 
+    def writeBytesWith(self, length, value):
+        for i in xrange(length):
+            self.writeChar(value)
+
     def writeChar(self, value):
         self.pack('<b', value)
 
