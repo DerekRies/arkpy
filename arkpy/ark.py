@@ -5,6 +5,7 @@ file types.
 
 import random
 import utils
+import arktypes
 
 from binary import BinaryStream
 
@@ -150,3 +151,26 @@ class ArkCharacterSetting:
       stream.writeNullTerminatedString('None')
       stream.writeInt32(0)
       # End of Structured Data ---------------------------
+
+
+class ArkProfile:
+  """
+  Responsible for loading and creating .arkprofile files
+  At this moment, this class will not load the
+  PlayerLocalData.arkprofile as that doesnt seem to follow the
+  same structure as LocalPlayer.arkprofile and SteamID.arkprofile
+  files do.
+
+  ArkProfiles describe individual characters, their visual
+  appearance, and some persistent data about them like Experience,
+  Levels, and Engrams.
+  """
+  def __init__(self, name):
+    pass
+
+  @classmethod
+  def from_file(cls, file_path):
+    pass
+
+  def save_to_file(self, file_path):
+    pass
