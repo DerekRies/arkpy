@@ -10,13 +10,13 @@ import arktypes
 from binary import BinaryStream
 
 
-def read_pair(stream):
-  name = stream.readNullTerminatedString()
-  typeof = stream.readNullTerminatedString()
-  return (name, typeof)
+# def stream.read_pair():
+#   name = stream.readNullTerminatedString()
+#   typeof = stream.readNullTerminatedString()
+#   return (name, typeof)
 
 def read_variable_data(stream):
-  pair = read_pair(stream)
+  pair = stream.read_pair()
   if pair[1] == 'FloatProperty':
     stream.readBytes(8)
     float_value = stream.readFloat()
@@ -83,7 +83,7 @@ class ArkCharacterSetting:
       # End of Unknown Bytes -----------------------------
 
       # Start of Structured Data -------------------------
-      read_pair(stream)
+      stream.read_pair()
       struct_property_size = stream.readInt64()
       stream.readNullTerminatedString()
       while True:
@@ -165,12 +165,36 @@ class ArkProfile:
   appearance, and some persistent data about them like Experience,
   Levels, and Engrams.
   """
-  def __init__(self, name):
-    pass
-
-  @classmethod
-  def from_file(cls, file_path):
-    pass
+  def __init__(self, file_path=None):
+    self.data = {}
+    if file_path is not None:
+      with open(file_path, 'rb') as ifile:
+        stream = BinaryStream(ifile)
+        stream.readBytes(4)
+        version = stream.readInt32()
+        if version == 1:
+          # Start of Header --------------------------
+          stream.readBytes(16)
+          print stream.readNullTerminatedString()
+          stream.readBytes(8)
+          print stream.readNullTerminatedString()
+          print stream.readNullTerminatedString()
+          print stream.readNullTerminatedString()
+          print stream.readNullTerminatedString()
+          print stream.readNullTerminatedString()
+          stream.readBytes(20)
+          # End of Header ----------------------------
+          print '----------------------------------'
+          var_name, var_type = stream.read_pair()
+          print var_name, var_type
+          if var_type == 'StructProperty':
+            print 'Struct Property found'
+            struct = arktypes.load_struct(stream)
+            print struct.size
+            self.data[var_name] = (var_type, struct)
+          print self.data
+        else:
+          print 'Can\'t read PlayerLocalData.arkfile types'
 
   def save_to_file(self, file_path):
     pass

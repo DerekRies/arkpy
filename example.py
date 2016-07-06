@@ -1,8 +1,15 @@
 import random
 
-from arkpy.ark import ArkCharacterSetting
+from arkpy import arktypes
+from arkpy.ark import ArkCharacterSetting, ArkProfile
 
 
+
+def load_arkprofile():
+  fp = 'data/SavedArksLocal/LocalPlayer.arkprofile'
+  # fp = 'data/TheCenterSavedArksLocal/LocalPlayer.arkprofile'
+  # fp = 'data/LocalProfiles/PlayerLocalData.arkprofile'
+  profile = ArkProfile(fp)
 
 def main():
   # fp = 'data/SavedArksLocal/min.arkcharactersetting'
@@ -11,9 +18,13 @@ def main():
   # fp = 'data/SavedArksLocal/mini.arkcharactersetting'
   # fp = 'data/SavedArksLocal/defaultmale.arkcharactersetting'
   # fp = 'data/throwaway.arkcharactersetting'
-  fp = 'data/random.arkcharactersetting'
-  character = ArkCharacterSetting.from_file(fp)
-  print character.character_setting
+  # fp = 'data/random.arkcharactersetting'
+  # character = ArkCharacterSetting.from_file(fp)
+  # print character.character_setting
+
+  # c = arktypes.PrimalPlayerDataStruct()
+  # print c.size
+  load_arkprofile()
 
 
   # character = ArkCharacterSetting()

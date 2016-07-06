@@ -64,6 +64,11 @@ class BinaryStream:
         self.readByte()
         return s
 
+    def read_pair(self):
+      name = self.readNullTerminatedString()
+      typeof = self.readNullTerminatedString()
+      return (name, typeof)
+
     def readNBytesAsBits(self, nbytes):
         bits = ''
         for i in xrange(nbytes):
