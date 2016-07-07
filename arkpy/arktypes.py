@@ -141,7 +141,8 @@ class ArrayProperty(BaseProperty):
           # Object Properties are separated by 01 00 00 00
 
   def __repr__(self):
-    return "[" + ", ".join(str(x) for x in self.value) + "]<%s>" % self.child_type
+    return "[]<%s>(%s)" % (self.child_type, self.length)
+    # return "[" + ", ".join(str(x) for x in self.value) + "]<%s>" % self.child_type
 
 
 class ByteProperty(BaseProperty):
@@ -280,23 +281,23 @@ class PrimalPlayerDataStruct(BaseStruct):
     self.size = size
     if stream is not None:
       print 'loading from stream'
-      # while stream.peek(stream.readNullTerminatedString) != 'None':
-        # self.load_and_set_next_property(stream)
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
+      while stream.peek(stream.readNullTerminatedString) != 'None':
+        self.load_and_set_next_property(stream)
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
 
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
-      self.load_and_set_next_property(stream)
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
       # self.load_and_set_next_property(stream)
       # self.load_and_set_next_property(stream)
-      # stream.readNullTerminatedString()
+      # self.load_and_set_next_property(stream)
+      stream.readNullTerminatedString()
 
   def __write_to_binary_stream(self, stream):
     pass
