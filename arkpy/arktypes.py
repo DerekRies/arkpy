@@ -100,6 +100,7 @@ class StrProperty(BaseProperty):
 
 class ArrayProperty(BaseProperty):
   def __init__(self, value=[], child_type='IntProperty', stream=None):
+    print 'MAKING AN ARRAY PROPERTY!!!!!!'
     BaseProperty.__init__(self)
     conversion_table = {
       'IntProperty': stream.readInt32,
@@ -124,15 +125,51 @@ class ArrayProperty(BaseProperty):
       self.index = stream.readInt32()
       self.child_type = stream.readNullTerminatedString()
       self.length = stream.readInt32()
+      print 'SIZE: ' + str(self.size)
+      print 'LENGTH: ' + str(self.length)
       for i in xrange(self.length):
-        value = conversion_table[self.child_type]()
-        self.value.append(value)
-        if self.child_type == 'ObjectProperty' and i != self.length - 1:
-          # Object Properties are separated by 01 00 00 00
+        print 'ITEM: ' + str(i)
+        # print stream.readNullTerminatedString()
+        if self.child_type == 'ObjectProperty':
           stream.readInt32()
+          value = stream.readNullTerminatedString()
+          print value
+        else:
+          value = conversion_table[self.child_type]()
+        self.value.append(value)
+        # if self.child_type == 'ObjectProperty' and i != self.length - 1:
+          # Object Properties are separated by 01 00 00 00
 
   def __repr__(self):
     return "[" + ", ".join(str(x) for x in self.value) + "]<%s>" % self.child_type
+
+
+class ByteProperty(BaseProperty):
+  def __init__(self, value=0.0, stream=None):
+    BaseProperty.__init__(self)
+    self.value = value
+    self.size = 4
+    if stream is not None:
+      self.size = stream.readInt32()
+      self.index = stream.readInt32()
+      # No idea why there's a junk "None" inserted here
+      stream.readNullTerminatedString()
+      self.value = stream.readChar()
+
+
+class ObjectProperty(BaseProperty):
+  def __init__(self, value=0.0, stream=None):
+    BaseProperty.__init__(self)
+    self.value = value
+    self.size = 4
+    if stream is not None:
+      self.size = stream.readInt32()
+      self.index = stream.readInt32()
+      # No idea what this is, it's always 01 00 00 00 in the
+      # ObjectProperties I've seen. Maybe it's an identifier
+      # for the type of data to follow, like 1=String?
+      prefix = stream.readInt32()
+      self.value = stream.readNullTerminatedString()
 
 
 class FloatProperty(BaseProperty):
@@ -243,23 +280,23 @@ class PrimalPlayerDataStruct(BaseStruct):
     self.size = size
     if stream is not None:
       print 'loading from stream'
-      while stream.peek(stream.readNullTerminatedString) != 'None':
-        self.load_and_set_next_property(stream)
-      stream.readNullTerminatedString()
-      # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
-      # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
-      # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
-      # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
+      # while stream.peek(stream.readNullTerminatedString) != 'None':
+        # self.load_and_set_next_property(stream)
+      self.load_and_set_next_property(stream)
+      # print '---------------------------------'
+      self.load_and_set_next_property(stream)
+      # print '---------------------------------'
+      self.load_and_set_next_property(stream)
+      # print '---------------------------------'
+      self.load_and_set_next_property(stream)
+      # print '---------------------------------'
 
+      self.load_and_set_next_property(stream)
+      # print '---------------------------------'
+      self.load_and_set_next_property(stream)
       # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
       # self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
+      # stream.readNullTerminatedString()
 
   def __write_to_binary_stream(self, stream):
     pass
@@ -343,6 +380,8 @@ PROPERTIES = {
   'StrProperty': StrProperty,
   'BoolProperty': BoolProperty,
   'ArrayProperty': ArrayProperty,
+  'ByteProperty': ByteProperty,
+  'ObjectProperty': ObjectProperty,
 }
 STRUCTS = {
   'PrimalPlayerDataStruct': PrimalPlayerDataStruct,
