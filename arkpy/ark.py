@@ -191,6 +191,7 @@ class ArkProfile:
             print 'Struct Property found'
             struct = arktypes.load_struct(stream)
             print struct.size
+
             self.data[var_name] = (var_type, struct)
           print self.data
         else:

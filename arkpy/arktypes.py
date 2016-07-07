@@ -113,7 +113,7 @@ class PrimalPlayerDataStruct(BaseStruct):
     BaseStruct.__init__(self, size=size)
     print 'PrimalPlayerDataStruct initialized'
     # self.data = {}
-    # self.size = size
+    self.size = size
     if stream is not None:
       print 'loading from stream'
       name, prop_type, value = load_property(stream)
