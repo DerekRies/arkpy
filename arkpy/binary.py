@@ -168,11 +168,20 @@ class BinaryStream:
         self.writeInt32(vec[1])
         self.writeInt32(vec[2])
 
+    def peek(self, readMethod):
+        pos = self.tell()
+        value = readMethod()
+        self.base_stream.seek(pos, 0)
+        return value
+
     def pack(self, fmt, data):
         return self.writeBytes(pack(fmt, data))
 
     def unpack(self, fmt, length=1):
         return unpack(fmt, self.readBytes(length))[0]
+
+    def tell(self):
+        return self.base_stream.tell()
 
 
 class BitPacker:

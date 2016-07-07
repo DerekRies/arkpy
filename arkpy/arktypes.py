@@ -15,6 +15,8 @@ import json
 
 from binary import BinaryStream
 
+debug = True
+
 
 def load_struct(stream):
   size = stream.readInt32()
@@ -70,7 +72,11 @@ class BaseStruct:
       self.data[name].append((prop_type, value))
     else:
       self.data[name] = (prop_type, value)
-    print self.data
+    if debug:
+      print '----------------------------------------'
+      print "Struct Type: %s" % self.__class__.__name__
+      print self.data
+      print '----------------------------------------'
     # print value.index
   # def __repr__(self):
   #   return json.dumps(self.data)
@@ -92,8 +98,9 @@ class StrProperty(BaseProperty):
     return self.value
 
 
-class ArrayProperty:
+class ArrayProperty(BaseProperty):
   def __init__(self, value=[], type='IntProperty'):
+    BaseProperty.__init__(self)
     self.value = value
 
 
@@ -108,38 +115,48 @@ class FloatProperty(BaseProperty):
       self.value = stream.readFloat()
 
 
-class DoubleProperty:
-  def __init__(self, value=0.0):
+class DoubleProperty(BaseProperty):
+  def __init__(self, value=0.0, stream=None):
+    BaseProperty.__init__(self)
     self.value = value
     self.size = 8
 
 
-class Int16Property:
-  def __init__(self, value=0):
+class Int16Property(BaseProperty):
+  def __init__(self, value=0, stream=None):
+    BaseProperty.__init__(self)
     self.value = value
     self.size = 2
 
 
-class UInt16Property:
-  def __init__(self, value=0):
+class UInt16Property(BaseProperty):
+  def __init__(self, value=0, stream=None):
+    BaseProperty.__init__(self)
     self.value = value
     self.size = 2
 
 
-class IntProperty:
-  def __init__(self, value=0):
+class IntProperty(BaseProperty):
+  def __init__(self, value=0, stream=None):
+    BaseProperty.__init__(self)
+    self.value = value
+    self.size = 4
+    if stream is not None:
+      self.size = stream.readInt32()
+      self.index = stream.readInt32()
+      self.value = stream.readInt32()
+
+
+class UIntProperty(BaseProperty):
+  def __init__(self, value=0, stream=None):
+    BaseProperty.__init__(self)
     self.value = value
     self.size = 4
 
 
-class UIntProperty:
-  def __init__(self, value=0):
-    self.value = value
-    self.size = 4
-
-
-class Int64Property:
-  def __init__(self, value=0):
+class Int64Property(BaseProperty):
+  def __init__(self, value=0, stream=None):
+    BaseProperty.__init__(self)
     self.value = value
     self.size = 8
 
@@ -213,12 +230,14 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
     self.size = size
     if stream is not None:
       # Colors
-      self.load_and_set_next_property(stream)
-      self.load_and_set_next_property(stream)
-      self.load_and_set_next_property(stream)
-      self.load_and_set_next_property(stream)
-      self.load_and_set_next_property(stream)
-
+      # self.load_and_set_next_property(stream)
+      # self.load_and_set_next_property(stream)
+      # self.load_and_set_next_property(stream)
+      # self.load_and_set_next_property(stream)
+      # self.load_and_set_next_property(stream)
+      # self.load_and_set_next_property(stream)
+      while stream.peek(stream.readNullTerminatedString) != 'None':
+        self.load_and_set_next_property(stream)
 
   def __write_to_binary_stream(self, stream):
     pass
