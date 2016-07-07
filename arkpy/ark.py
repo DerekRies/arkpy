@@ -188,9 +188,9 @@ class ArkProfile:
           var_name, var_type = stream.read_pair()
           print var_name, var_type
           if var_type == 'StructProperty':
-            print 'Struct Property found'
+            # print 'Struct Property found'
             struct = arktypes.load_struct(stream)
-            print struct.size
+            # print struct.size
 
             self.data[var_name] = (var_type, struct)
           print self.data

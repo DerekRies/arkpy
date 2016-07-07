@@ -18,8 +18,9 @@ from binary import BinaryStream
 
 class BaseProperty:
   def __init__(self, value=None):
-    print 'Base Property init'
+    # print 'Base Property init'
     self.value=value
+    self.index = 0
   def __repr__(self):
     return str(self.value)
   def __str__(self):
@@ -36,9 +37,17 @@ class BaseStruct:
   #   return json.dumps(self.data)
 
 
-class StringProperty:
-  def __init__(self, value=''):
+class StrProperty(BaseProperty):
+  def __init__(self, value='', stream=None):
+    BaseProperty.__init__(self)
     self.value = value
+    if stream is not None:
+      garbage = stream.readInt32()
+      self.index = stream.readInt32()
+      self.value = stream.readNullTerminatedString()
+
+  def __repr__(self):
+    return self.value
 
 
 class ArrayProperty:
@@ -90,21 +99,33 @@ class UInt64Property(BaseProperty):
       self.value = stream.readUInt64()
 
 
-class BoolProperty:
-  def __init__(self, value=True):
+class BoolProperty(BaseProperty):
+  def __init__(self, value=True, stream=None):
+    BaseProperty.__init__(self)
     self.value = value
+    if stream is not None:
+      garbage = stream.readInt32()
+      self.index = stream.readInt32()
+      self.value = bool(stream.readChar())
 
 
 def load_struct(stream):
-  size = stream.readInt64()
+  size = stream.readInt32()
+  index = stream.readInt32()
   name = stream.readNullTerminatedString()
   # print size
+  # print name
   struct = STRUCTS[name](size=size, stream=stream)
+  struct.index = index
   return struct
 
 def load_property(stream):
   name, prop_type = stream.read_pair()
-  return (name, prop_type, PROPERTIES[prop_type](stream=stream))
+  # print (name, prop_type)
+  if prop_type == 'StructProperty':
+    return (name, prop_type, load_struct(stream))
+  else:
+    return (name, prop_type, PROPERTIES[prop_type](stream=stream))
 
 # ArkProfile Structures ----------------------------------
 
@@ -119,58 +140,92 @@ class PrimalPlayerDataStruct(BaseStruct):
       name, prop_type, value = load_property(stream)
       self.data[name] = (prop_type, value)
       print self.data
+      # load_property(stream)
+      print '---------------------------------'
+
+      name, prop_type, value = load_property(stream)
+      self.data[name] = (prop_type, value)
+      print self.data
+      print '---------------------------------'
+
+      name, prop_type, value = load_property(stream)
+      self.data[name] = (prop_type, value)
+      print self.data
+      print '---------------------------------'
+
+      name, prop_type, value = load_property(stream)
+      self.data[name] = (prop_type, value)
+      print self.data
+      print '---------------------------------'
+
+      name, prop_type, value = load_property(stream)
+      self.data[name] = (prop_type, value)
+      print self.data
+      print '---------------------------------'
 
   def __write_to_binary_stream(self, stream):
     pass
 
 
-class UniqueNetIdRepl:
-  def __init__(self, size=0):
+class UniqueNetIdRepl(BaseStruct):
+  def __init__(self, size=0, stream=None):
+    BaseStruct.__init__(self, size=size)
     self.size = size
-
-  @classmethod
-  def __from_binary_stream(cls, stream):
-    pass
+    self.value = None
+    if stream is not None:
+      stream.readInt32()
+      self.value = stream.readNullTerminatedString()
 
   def __write_to_binary_stream(self, stream):
     pass
 
+  def __repr__(self):
+    return str(self.__class__.__name__) + ': ' + str(self.value)
 
-class PrimalPlayerCharacterConfigStruct:
-  def __init__(self, size=0):
+
+class PrimalPlayerCharacterConfigStruct(BaseStruct):
+  def __init__(self, size=0, stream=None):
+    BaseStruct.__init__(self, size=size)
     self.size = size
+    if stream is not None:
+      name, prop_type, value = load_property(stream)
+      self.data[name] = (prop_type, value)
+      print self.data
+      print value.index
 
-  @classmethod
-  def __from_binary_stream(cls, stream):
-    pass
+      name, prop_type, value = load_property(stream)
+      self.data[name] = (prop_type, value)
+      print self.data
+      print value.index
 
   def __write_to_binary_stream(self, stream):
     pass
 
 
-class LinearColor:
-  def __init__(self, size=0, r=0.0, g=0.0, b=0.0, a=1.0):
+class LinearColor(BaseStruct):
+  def __init__(self, size=0, r=0.0, g=0.0, b=0.0, a=1.0, stream=None):
+    BaseStruct.__init__(self, size=size)
     self.size = size
     self.r = r
     self.g = g
     self.b = b
     self.a = a
-
-  @classmethod
-  def __from_binary_stream(cls, stream):
-    pass
+    if stream is not None:
+      self.r = stream.readFloat()
+      self.g = stream.readFloat()
+      self.b = stream.readFloat()
+      self.a = stream.readFloat()
 
   def __write_to_binary_stream(self, stream):
     pass
 
+  def __repr__(self):
+    return "(R: %s, G: %s, B: %s, A: %s)" % (self.r, self.g, self.b, self.a)
+
 
 class PrimalPersistentCharacterStatsStruct:
-  def __init__(self, size=0):
+  def __init__(self, size=0, stream=None):
     self.size = size
-
-  @classmethod
-  def __from_binary_stream(cls, stream):
-    pass
 
   def __write_to_binary_stream(self, stream):
     pass
@@ -186,7 +241,7 @@ PROPERTIES = {
   'UInt64Property': UInt64Property,
   'FloatProperty': FloatProperty,
   'DoubleProperty': DoubleProperty,
-  'StringProperty': StringProperty,
+  'StrProperty': StrProperty,
   'BoolProperty': BoolProperty,
   'ArrayProperty': ArrayProperty,
 }
