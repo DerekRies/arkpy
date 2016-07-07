@@ -194,6 +194,7 @@ class ArkProfile:
 
             self.data[var_name] = (var_type, struct)
           print self.data
+          # Only a null-terminated "None" and 4 NULL bytes remaining
         else:
           print 'Can\'t read PlayerLocalData.arkfile types'
 

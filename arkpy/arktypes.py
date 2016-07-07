@@ -99,9 +99,40 @@ class StrProperty(BaseProperty):
 
 
 class ArrayProperty(BaseProperty):
-  def __init__(self, value=[], type='IntProperty'):
+  def __init__(self, value=[], child_type='IntProperty', stream=None):
     BaseProperty.__init__(self)
+    conversion_table = {
+      'IntProperty': stream.readInt32,
+      'UIntProperty': stream.readUInt32,
+      'Int16Property': stream.readInt16,
+      'UInt16Property': stream.readUInt16,
+      'Int64Property': stream.readInt64,
+      'UInt64Property': stream.readUInt64,
+      'FloatProperty': stream.readFloat,
+      'DoubleProperty': stream.readDouble,
+      'StrProperty': stream.readNullTerminatedString,
+      'ObjectProperty': stream.readNullTerminatedString,
+    }
     self.value = value
+    # An ArrayProperty's size is not the length of items
+    # It is the size of the array values in Bytes like every other
+    # property/struct
+    self.size = 4
+    self.child_type = child_type
+    if stream is not None:
+      self.size = stream.readInt32()
+      self.index = stream.readInt32()
+      self.child_type = stream.readNullTerminatedString()
+      self.length = stream.readInt32()
+      for i in xrange(self.length):
+        value = conversion_table[self.child_type]()
+        self.value.append(value)
+        if self.child_type == 'ObjectProperty' and i != self.length - 1:
+          # Object Properties are separated by 01 00 00 00
+          stream.readInt32()
+
+  def __repr__(self):
+    return "[" + ", ".join(str(x) for x in self.value) + "]<%s>" % self.child_type
 
 
 class FloatProperty(BaseProperty):
@@ -120,6 +151,10 @@ class DoubleProperty(BaseProperty):
     BaseProperty.__init__(self)
     self.value = value
     self.size = 8
+    if stream is not None:
+      self.size = stream.readInt32()
+      self.index = stream.readInt32()
+      self.value = stream.readDouble()
 
 
 class Int16Property(BaseProperty):
@@ -127,6 +162,10 @@ class Int16Property(BaseProperty):
     BaseProperty.__init__(self)
     self.value = value
     self.size = 2
+    if stream is not None:
+      self.size = stream.readInt32()
+      self.index = stream.readInt32()
+      self.value = stream.readInt16()
 
 
 class UInt16Property(BaseProperty):
@@ -134,6 +173,10 @@ class UInt16Property(BaseProperty):
     BaseProperty.__init__(self)
     self.value = value
     self.size = 2
+    if stream is not None:
+      self.size = stream.readInt32()
+      self.index = stream.readInt32()
+      self.value = stream.readUInt16()
 
 
 class IntProperty(BaseProperty):
@@ -152,6 +195,10 @@ class UIntProperty(BaseProperty):
     BaseProperty.__init__(self)
     self.value = value
     self.size = 4
+    if stream is not None:
+      self.size = stream.readInt32()
+      self.index = stream.readInt32()
+      self.value = stream.readUInt32()
 
 
 class Int64Property(BaseProperty):
@@ -159,6 +206,10 @@ class Int64Property(BaseProperty):
     BaseProperty.__init__(self)
     self.value = value
     self.size = 8
+    if stream is not None:
+      self.size = stream.readInt32()
+      self.index = stream.readInt32()
+      self.value = stream.readInt64()
 
 
 class UInt64Property(BaseProperty):
@@ -192,17 +243,23 @@ class PrimalPlayerDataStruct(BaseStruct):
     self.size = size
     if stream is not None:
       print 'loading from stream'
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
+      while stream.peek(stream.readNullTerminatedString) != 'None':
+        self.load_and_set_next_property(stream)
+      stream.readNullTerminatedString()
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
 
-      self.load_and_set_next_property(stream)
-      # print '---------------------------------'
+      # self.load_and_set_next_property(stream)
+      # # print '---------------------------------'
+      # self.load_and_set_next_property(stream)
+      # self.load_and_set_next_property(stream)
+      # self.load_and_set_next_property(stream)
 
   def __write_to_binary_stream(self, stream):
     pass
@@ -229,15 +286,11 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
     BaseStruct.__init__(self, size=size)
     self.size = size
     if stream is not None:
-      # Colors
-      # self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
+      # Structs with multiple values end with None
       while stream.peek(stream.readNullTerminatedString) != 'None':
         self.load_and_set_next_property(stream)
+      # Remember to read the None to advance position past it when done
+      stream.readNullTerminatedString()
 
   def __write_to_binary_stream(self, stream):
     pass
@@ -264,9 +317,14 @@ class LinearColor(BaseStruct):
     return "(R: %s, G: %s, B: %s, A: %s)" % (self.r, self.g, self.b, self.a)
 
 
-class PrimalPersistentCharacterStatsStruct:
+class PrimalPersistentCharacterStatsStruct(BaseStruct):
   def __init__(self, size=0, stream=None):
+    BaseStruct.__init__(self)
     self.size = size
+    if stream is not None:
+      while stream.peek(stream.readNullTerminatedString) != 'None':
+        self.load_and_set_next_property(stream)
+      stream.readNullTerminatedString()
 
   def __write_to_binary_stream(self, stream):
     pass
