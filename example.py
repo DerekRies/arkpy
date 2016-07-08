@@ -7,7 +7,8 @@ from arkpy.ark import ArkCharacterSetting, ArkProfile
 
 def load_arkprofile():
   # fp = 'data/SavedArksLocal/LocalPlayer.arkprofile'
-  fp = 'data/TheCenterSavedArksLocal/LocalPlayer.arkprofile'
+  # fp = 'data/TheCenterSavedArksLocal/LocalPlayer.arkprofile'
+  fp = 'data/76561197972327357.arkprofile'
   # fp = 'data/LocalProfiles/PlayerLocalData.arkprofile'
   profile = ArkProfile(fp)
 
