@@ -10,11 +10,6 @@ import arktypes
 from binary import BinaryStream
 
 
-# def stream.read_pair():
-#   name = stream.readNullTerminatedString()
-#   typeof = stream.readNullTerminatedString()
-#   return (name, typeof)
-
 BoneModifierIndices = {
   'Head Size': 0,
   'Upper Face Size': 15,
@@ -74,6 +69,98 @@ def read_variable_data(stream):
       array.append(stream.readFloat())
     return (pair[0], array)
   return (None, None)
+
+
+class Character:
+  """
+  API Wrapper around the PersistentCharacterStats and
+  CharacterConfig structs that will be used by FileReaders
+  that share these structs in common, like .arkprofile and
+  .arktribe files.
+  """
+  def __init__(self, stats=None, config=None):
+    self.stats = stats
+    self.config = config
+
+  def get_data_as_dict(self):
+    pass
+
+  def get_name(self):
+    return self.config.data['PlayerCharacterName']
+
+
+  def set_name(self, value):
+    self.config.data['PlayerCharacterName'].set(value)
+
+  def get_body_color(self, index, default=None):
+    colors = self.config.data['BodyColors']
+    for color in colors:
+      if color.index == index:
+        return color
+    return default
+
+  def set_body_color(self, index, r=0.0,g=0.0,b=0.0,a=1.0):
+    colors = self.config.data['BodyColors']
+    for color in colors:
+      if color.index == index:
+        color.r = r
+        color.g = g
+        color.b = b
+        color.a = a
+
+  def get_bone_modifier(self, index):
+    pass
+
+  def set_bone_modifier(self, index, value):
+    pass
+
+  def get_spawn_region(self):
+    pass
+
+  def set_spawn_region(self, index, value):
+    pass
+
+  def get_exp(self):
+    pass
+
+  def set_exp(self, value):
+    pass
+
+  def get_level(self):
+    pass
+
+  def set_level(self, value):
+    pass
+
+  def get_all_stat_points(self):
+    # Returns a Dict of all stats and their point allocations
+    pass
+
+  def get_stat_points(self, index):
+    pass
+
+  def set_stat_points(self, index, value):
+    pass
+
+  def get_engram_points(self):
+    pass
+
+  def set_engram_points(self, value):
+    pass
+
+  def get_engrams(self):
+    pass
+
+  def add_engram(self, engram_path):
+    pass
+
+  def get_default_slot(self, index):
+    pass
+
+  def set_default_slot(self, index, item_path):
+    pass
+
+
 
 
 class ArkCharacterSetting:
@@ -236,28 +323,16 @@ class ArkProfile:
             struct = arktypes.load_struct(stream)
             # print struct.size
 
-            self.data[var_name] = (var_type, struct)
+            self.data[var_name] = struct
             # self.data = struct
           print self.data
           # Only a null-terminated "None" and 4 NULL bytes remaining
         else:
           print 'Can\'t read PlayerLocalData.arkprofile types'
-    self.myData = self.data['MyData'][1]
+    self.myData = self.data['MyData']
+    statsstruct = self.data['MyData'].get('MyPersistentCharacterStats')
+    configstruct = self.data['MyData'].get('MyPlayerCharacterConfig')
+    self.character = Character(stats=statsstruct, config=configstruct)
 
   def save_to_file(self, file_path):
     pass
-
-  # API for Using the Data
-  def get_exp(self):
-    p_stats = self.myData.get('MyPersistentCharacterStats')
-    return p_stats.get_exp()
-
-  def set_exp(self, val):
-    p_stats = self.myData.get('MyPersistentCharacterStats')
-    fval = float(val)
-    return p_stats.set_exp(val=fval)
-
-  def add_exp(self, increment):
-    exp = self.get_exp()
-    new_val = exp + increment
-    return self.set_exp(val=new_val)

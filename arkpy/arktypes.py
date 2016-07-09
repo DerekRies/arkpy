@@ -5,8 +5,8 @@ well as the primitives used like FloatProperty or IntProperty because
 in the file formats the usage of these primitives isn't the typical
 bytesize of type + 1 Byte for identifier. Instead most of the primitives
 are identified by string, and then have 8 bytes between the type string
-and the value, which is usually just 8 padding bytes, but in some cases
-contains an identifier which is used by some of the parent structs.
+and the value, which is usually the size of the structure (4 bytes),
+the index (another 4 bytes).
 """
 
 import random
@@ -24,6 +24,8 @@ def load_struct(stream):
   name = stream.readNullTerminatedString()
   # print size
   # print name
+  # struct_to_use = STRUCTS.get(name, PrimalPlayerDataStruct)
+  # struct = struct_to_use(size=size, stream=stream)
   struct = STRUCTS[name](size=size, stream=stream)
   struct.index = index
   return struct
@@ -59,7 +61,7 @@ class BaseStruct:
     self.index = 0
 
   def get(self, key):
-    return self.data[key][1]
+    return self.data[key]
 
   def load_and_set_next_property(self, stream):
     """
@@ -75,9 +77,9 @@ class BaseStruct:
         self.data[name] = []
       elif isinstance(first_item, list) is False:
         self.data[name] = [first_item]
-      self.data[name].append((prop_type, value))
+      self.data[name].append(value)
     else:
-      self.data[name] = (prop_type, value)
+      self.data[name] = value
     if debug:
       print '----------------------------------------'
       print "Struct Type: %s" % self.__class__.__name__
@@ -111,6 +113,7 @@ class ArrayProperty(BaseProperty):
     conversion_table = {
       'IntProperty': stream.readInt32,
       'UIntProperty': stream.readUInt32,
+      'UInt32Property': stream.readUInt32,
       'Int16Property': stream.readInt16,
       'UInt16Property': stream.readUInt16,
       'Int64Property': stream.readInt64,
@@ -383,23 +386,13 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
   def __write_to_binary_stream(self, stream):
     pass
 
-  def get_exp(self):
-    return self.data['CharacterStatusComponent_ExperiencePoints'][1].value
-
-  def set_exp(self, val=0):
-    self.data['CharacterStatusComponent_ExperiencePoints'][1].set(val)
-
-  def get_engram_points(self):
-    return self.data['PlayerState_TotalEngramPoints'][1].value
-
-  def set_engram_points(self, val=0):
-    self.data['PlayerState_TotalEngramPoints'][1].set(val)
 
 # End of ArkProfile Structures ----------------------------
 
 PROPERTIES = {
   'IntProperty': IntProperty,
   'UIntProperty': UIntProperty,
+  'UInt32Property': UIntProperty,
   'Int16Property': Int16Property,
   'UInt16Property': UInt16Property,
   'Int64Property': Int64Property,
