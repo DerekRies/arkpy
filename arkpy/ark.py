@@ -15,6 +15,31 @@ from binary import BinaryStream
 #   typeof = stream.readNullTerminatedString()
 #   return (name, typeof)
 
+BoneModifierIndices = {
+  'Head Size': 0,
+  'Upper Face Size': 15,
+  'Lower Face Size': 16,
+  'Head Width': 19,
+  'Head Height': 18,
+  'Head Depth': 20,
+  'Hand': 8,
+  'Arm Length': 5,
+  'Upper Arm': 6,
+  'Lower Arm': 7,
+  'Neck Size': 1,
+  'Neck Length': 2,
+  'Chest': 3,
+  'Shoulders': 4,
+  'Hip': 13,
+  'Torso Width': 14,
+  'Torso Height': 21,
+  'Torso Depth': 17,
+  'Leg Length': 9,
+  'Upper Leg': 10,
+  'Lower Leg': 11,
+  'Feet': 12,
+}
+
 def read_variable_data(stream):
   pair = stream.read_pair()
   if pair[1] == 'FloatProperty':
