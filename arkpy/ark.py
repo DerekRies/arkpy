@@ -40,6 +40,25 @@ BoneModifierIndices = {
   'Feet': 12,
 }
 
+StatIndices = {
+  'Health':0,
+  'Stamina':1,
+  'Oxygen':3,
+  'Food':4,
+  'Water':5,
+  'Weight':7,
+  'Melee Damage':8,
+  'Movement Speed':9,
+  'Fortitude':10,
+  'Crafting Speed':11,
+}
+
+BodyColorIndices = {
+  'Skin': 0,
+  'Hair': 1,
+  'Eye': 2,
+}
+
 def read_variable_data(stream):
   pair = stream.read_pair()
   if pair[1] == 'FloatProperty':
