@@ -48,12 +48,18 @@ class BaseProperty:
   def __str__(self):
     return str(self.value)
 
+  def set(self, val):
+    self.value = val
+
 
 class BaseStruct:
   def __init__(self, size=None):
     self.data = {}
     self.size = 0
     self.index = 0
+
+  def get(self, key):
+    return self.data[key][1]
 
   def load_and_set_next_property(self, stream):
     """
@@ -100,7 +106,7 @@ class StrProperty(BaseProperty):
 
 class ArrayProperty(BaseProperty):
   def __init__(self, value=[], child_type='IntProperty', stream=None):
-    print 'MAKING AN ARRAY PROPERTY!!!!!!'
+    # print 'MAKING AN ARRAY PROPERTY!!!!!!'
     BaseProperty.__init__(self)
     conversion_table = {
       'IntProperty': stream.readInt32,
@@ -125,10 +131,10 @@ class ArrayProperty(BaseProperty):
       self.index = stream.readInt32()
       self.child_type = stream.readNullTerminatedString()
       self.length = stream.readInt32()
-      print 'SIZE: ' + str(self.size)
-      print 'LENGTH: ' + str(self.length)
+      # print 'SIZE: ' + str(self.size)
+      # print 'LENGTH: ' + str(self.length)
       for i in xrange(self.length):
-        print 'ITEM: ' + str(i)
+        # print 'ITEM: ' + str(i)
         # print stream.readNullTerminatedString()
         if self.child_type == 'ObjectProperty':
           stream.readInt32()
@@ -146,7 +152,7 @@ class ArrayProperty(BaseProperty):
 
 
 class ByteProperty(BaseProperty):
-  def __init__(self, value=0.0, stream=None):
+  def __init__(self, value=0, stream=None):
     BaseProperty.__init__(self)
     self.value = value
     self.size = 4
@@ -156,6 +162,9 @@ class ByteProperty(BaseProperty):
       # No idea why there's a junk "None" inserted here
       stream.readNullTerminatedString()
       self.value = stream.readChar()
+
+  def set(self, value=0):
+    self.value = int(value)
 
 
 class ObjectProperty(BaseProperty):
@@ -183,6 +192,9 @@ class FloatProperty(BaseProperty):
       self.index = stream.readInt32()
       self.value = stream.readFloat()
 
+  def set(self, val=0.0):
+    self.value = float(val)
+
 
 class DoubleProperty(BaseProperty):
   def __init__(self, value=0.0, stream=None):
@@ -205,6 +217,9 @@ class Int16Property(BaseProperty):
       self.index = stream.readInt32()
       self.value = stream.readInt16()
 
+  def set(self, value=0):
+    self.value = int(value)
+
 
 class UInt16Property(BaseProperty):
   def __init__(self, value=0, stream=None):
@@ -215,6 +230,9 @@ class UInt16Property(BaseProperty):
       self.size = stream.readInt32()
       self.index = stream.readInt32()
       self.value = stream.readUInt16()
+
+  def set(self, value=0):
+    self.value = int(value)
 
 
 class IntProperty(BaseProperty):
@@ -227,6 +245,9 @@ class IntProperty(BaseProperty):
       self.index = stream.readInt32()
       self.value = stream.readInt32()
 
+  def set(self, value=0):
+    self.value = int(value)
+
 
 class UIntProperty(BaseProperty):
   def __init__(self, value=0, stream=None):
@@ -237,6 +258,9 @@ class UIntProperty(BaseProperty):
       self.size = stream.readInt32()
       self.index = stream.readInt32()
       self.value = stream.readUInt32()
+
+  def set(self, value=0):
+    self.value = int(value)
 
 
 class Int64Property(BaseProperty):
@@ -249,6 +273,9 @@ class Int64Property(BaseProperty):
       self.index = stream.readInt32()
       self.value = stream.readInt64()
 
+  def set(self, value=0):
+    self.value = int(value)
+
 
 class UInt64Property(BaseProperty):
   def __init__(self, value=0, stream=None):
@@ -259,6 +286,9 @@ class UInt64Property(BaseProperty):
       self.size = stream.readInt32()
       self.index = stream.readInt32()
       self.value = stream.readUInt64()
+
+  def set(self, value=0):
+    self.value = int(value)
 
 
 class BoolProperty(BaseProperty):
@@ -283,20 +313,6 @@ class PrimalPlayerDataStruct(BaseStruct):
       print 'loading from stream'
       while stream.peek(stream.readNullTerminatedString) != 'None':
         self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
-      # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
-      # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
-      # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
-
-      # self.load_and_set_next_property(stream)
-      # # print '---------------------------------'
-      # self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
-      # self.load_and_set_next_property(stream)
       stream.readNullTerminatedString()
 
   def __write_to_binary_stream(self, stream):
@@ -335,9 +351,9 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
 
 
 class LinearColor(BaseStruct):
-  def __init__(self, size=0, r=0.0, g=0.0, b=0.0, a=1.0, stream=None):
-    BaseStruct.__init__(self, size=size)
-    self.size = size
+  def __init__(self, size=16, r=0.0, g=0.0, b=0.0, a=1.0, stream=None):
+    BaseStruct.__init__(self)
+    self.size = 16
     self.r = r
     self.g = g
     self.b = b
@@ -366,6 +382,18 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
 
   def __write_to_binary_stream(self, stream):
     pass
+
+  def get_exp(self):
+    return self.data['CharacterStatusComponent_ExperiencePoints'][1].value
+
+  def set_exp(self, val=0):
+    self.data['CharacterStatusComponent_ExperiencePoints'][1].set(val)
+
+  def get_engram_points(self):
+    return self.data['PlayerState_TotalEngramPoints'][1].value
+
+  def set_engram_points(self, val=0):
+    self.data['PlayerState_TotalEngramPoints'][1].set(val)
 
 # End of ArkProfile Structures ----------------------------
 

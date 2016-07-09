@@ -8,9 +8,14 @@ from arkpy.ark import ArkCharacterSetting, ArkProfile
 def load_arkprofile():
   # fp = 'data/SavedArksLocal/LocalPlayer.arkprofile'
   # fp = 'data/TheCenterSavedArksLocal/LocalPlayer.arkprofile'
-  fp = 'data/76561197972327357.arkprofile'
+  # fp = 'data/76561197972327357.arkprofile'
+  fp = 'data/LocalPlayerRosetta.arkprofile'
   # fp = 'data/LocalProfiles/PlayerLocalData.arkprofile'
   profile = ArkProfile(fp)
+  print 'done ------------------------------------'
+  print profile.get_exp()
+  profile.add_exp(100)
+  print profile.get_exp()
 
 def main():
   # fp = 'data/SavedArksLocal/min.arkcharactersetting'

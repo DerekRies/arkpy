@@ -237,10 +237,27 @@ class ArkProfile:
             # print struct.size
 
             self.data[var_name] = (var_type, struct)
+            # self.data = struct
           print self.data
           # Only a null-terminated "None" and 4 NULL bytes remaining
         else:
-          print 'Can\'t read PlayerLocalData.arkfile types'
+          print 'Can\'t read PlayerLocalData.arkprofile types'
+    self.myData = self.data['MyData'][1]
 
   def save_to_file(self, file_path):
     pass
+
+  # API for Using the Data
+  def get_exp(self):
+    p_stats = self.myData.get('MyPersistentCharacterStats')
+    return p_stats.get_exp()
+
+  def set_exp(self, val):
+    p_stats = self.myData.get('MyPersistentCharacterStats')
+    fval = float(val)
+    return p_stats.set_exp(val=fval)
+
+  def add_exp(self, increment):
+    exp = self.get_exp()
+    new_val = exp + increment
+    return self.set_exp(val=new_val)
