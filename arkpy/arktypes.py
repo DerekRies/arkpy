@@ -50,8 +50,8 @@ class BaseProperty:
   def __str__(self):
     return str(self.value)
 
-  def set(self, val):
-    self.value = val
+  def set(self, value):
+    self.value = value
 
 
 class BaseStruct:
@@ -70,14 +70,28 @@ class BaseStruct:
     some fields in Ark File formats use the same name, but are not
     an array, their differentiator is a little Int32 index field.
     """
+
+    # TODO: Making Default values already instantiated on structs
+    # so you can assume any index-based values like BodyColor,
+    # BoneModifiers, and LevelUps is already a list with default values
+    # Just go to the index of that list and update it with the now
+    # read value.
+
     name, prop_type, value = load_property(stream)
-    if value.index != 0:
-      first_item = self.data.get(name, None)
-      if first_item is None:
-        self.data[name] = []
-      elif isinstance(first_item, list) is False:
-        self.data[name] = [first_item]
-      self.data[name].append(value)
+    if self.data.get(name, None) is not None:
+      if isinstance(self.data.get(name, None), list):
+        if len(self.data[name]) == 0:
+          self.data[name].append(value)
+        else:
+          self.data[name][value.index] = value
+      else:
+        self.data[name] = value
+      # first_item = self.data.get(name, None)
+      # if first_item is None:
+      #   self.data[name] = []
+      # elif isinstance(first_item, list) is False:
+      #   self.data[name] = [first_item]
+      # self.data[name].append(value)
     else:
       self.data[name] = value
     if debug:
@@ -195,8 +209,8 @@ class FloatProperty(BaseProperty):
       self.index = stream.readInt32()
       self.value = stream.readFloat()
 
-  def set(self, val=0.0):
-    self.value = float(val)
+  def set(self, value=0.0):
+    self.value = float(value)
 
 
 class DoubleProperty(BaseProperty):
@@ -342,6 +356,12 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
   def __init__(self, size=0, stream=None):
     BaseStruct.__init__(self, size=size)
     self.size = size
+    # Default Values
+    self.data['BodyColors'] = [LinearColor()] * 3
+    self.data['RawBoneModifiers'] = [FloatProperty(value=0.5)] * 22
+    self.data['bIsFemale'] = BoolProperty(value=False)
+    self.data['PlayerCharacterName'] = StrProperty(value='Unknown')
+    self.data['PlayerSpawnRegionIndex'] = IntProperty(value=0)
     if stream is not None:
       # Structs with multiple values end with None
       while stream.peek(stream.readNullTerminatedString) != 'None':
@@ -378,6 +398,19 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
   def __init__(self, size=0, stream=None):
     BaseStruct.__init__(self)
     self.size = size
+
+    # Default Values
+    level_up_string = 'CharacterStatusComponent_NumberOfLevelUpPointsApplied'
+    exp_string = 'CharacterStatusComponent_ExperiencePoints'
+    levels_string = 'CharacterStatusComponent_ExtraCharacterLevel'
+
+    self.data[levels_string] = UInt16Property()
+    self.data[exp_string] = FloatProperty()
+    self.data['PlayerState_TotalEngramPoints'] = IntProperty()
+    self.data[level_up_string] = [ByteProperty()] * 12
+    self.data['PlayerState_DefaultItemSlotClasses'] = [None] * 10
+
+
     if stream is not None:
       while stream.peek(stream.readNullTerminatedString) != 'None':
         self.load_and_set_next_property(stream)
