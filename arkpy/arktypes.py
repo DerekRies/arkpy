@@ -39,16 +39,16 @@ def load_property(stream):
     return (name, prop_type, PROPERTIES[prop_type](stream=stream))
 
 
-class BaseProperty:
+class BaseProperty():
   def __init__(self, value=None):
     # print 'Base Property init'
     self.value=value
     self.index = 0
     self.size = 0
-  def __repr__(self):
-    return str(self.value)
-  def __str__(self):
-    return str(self.value)
+  # def __repr__(self):
+  #   return str(self.value)
+  # def __str__(self):
+  #   return str(self.value)
 
   def set(self, value):
     self.value = value
@@ -109,15 +109,26 @@ class BaseStruct:
 class StrProperty(BaseProperty):
   def __init__(self, value='', stream=None):
     BaseProperty.__init__(self)
-    self.value = value
-    self.size = 4
+    self.value = str(value)
+    self.size = 5 + len(value)
     if stream is not None:
       self.size = stream.readInt32()
       self.index = stream.readInt32()
       self.value = stream.readNullTerminatedString()
 
+  def set(self, value):
+    self.value = str(value)
+    self.calc_size()
+
+  def calc_size(self):
+    # 4 Bytes for the Int32 specifying length
+    # N Bytes for the string's characters
+    # 1 NULL Byte to terminate the string
+    self.size = 5 + len(self.value)
+    return self.size
+
   def __repr__(self):
-    return self.value
+    return '<StrProperty> %s' % self.value
 
 
 class ArrayProperty(BaseProperty):
@@ -183,6 +194,10 @@ class ByteProperty(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
+  def __repr__(self):
+    return '<ByteProperty> %s' % self.value
+
+
 
 class ObjectProperty(BaseProperty):
   def __init__(self, value=0.0, stream=None):
@@ -212,6 +227,9 @@ class FloatProperty(BaseProperty):
   def set(self, value=0.0):
     self.value = float(value)
 
+  def __repr__(self):
+    return '<FloatProperty> %s' % self.value
+
 
 class DoubleProperty(BaseProperty):
   def __init__(self, value=0.0, stream=None):
@@ -237,6 +255,9 @@ class Int16Property(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
+  def __repr__(self):
+    return '<Int16Property> %s' % self.value
+
 
 class UInt16Property(BaseProperty):
   def __init__(self, value=0, stream=None):
@@ -250,6 +271,9 @@ class UInt16Property(BaseProperty):
 
   def set(self, value=0):
     self.value = int(value)
+
+  def __repr__(self):
+    return '<UInt16Property> %s' % self.value
 
 
 class IntProperty(BaseProperty):
@@ -265,6 +289,9 @@ class IntProperty(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
+  def __repr__(self):
+    return '<IntProperty> %s' % self.value
+
 
 class UIntProperty(BaseProperty):
   def __init__(self, value=0, stream=None):
@@ -278,6 +305,9 @@ class UIntProperty(BaseProperty):
 
   def set(self, value=0):
     self.value = int(value)
+
+  def __repr__(self):
+    return '<UInt32Property> %s' % self.value
 
 
 class Int64Property(BaseProperty):
@@ -293,6 +323,9 @@ class Int64Property(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
+  def __repr__(self):
+    return '<Int64Property> %s' % self.value
+
 
 class UInt64Property(BaseProperty):
   def __init__(self, value=0, stream=None):
@@ -307,6 +340,9 @@ class UInt64Property(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
+  def __repr__(self):
+    return '<UInt64Property> %s' % self.value
+
 
 class BoolProperty(BaseProperty):
   def __init__(self, value=True, stream=None):
@@ -317,6 +353,12 @@ class BoolProperty(BaseProperty):
       self.index = stream.readInt32()
       self.value = bool(stream.readChar())
 
+  def set(self, value=True):
+    self.value = bool(value)
+
+  def __repr__(self):
+    return '<BoolProperty> %s' % self.value
+
 
 # ArkProfile Structures ----------------------------------
 
@@ -326,6 +368,19 @@ class PrimalPlayerDataStruct(BaseStruct):
     print 'PrimalPlayerDataStruct initialized'
     # self.data = {}
     self.size = size
+
+    # Default Values
+    self.data['PlayerDataID'] = UInt64Property(value=0)
+    self.data['UniqueID'] = UniqueNetIdRepl()
+    self.data['SavedNetworkAddress'] = StrProperty()
+    self.data['PlayerName'] = StrProperty()
+    self.data['bFirstSpawned'] = BoolProperty()
+    cs = 'MyPlayerCharacterConfig'
+    self.data[cs] = PrimalPlayerCharacterConfigStruct()
+    ss = 'MyPersistentCharacterStats'
+    self.data[ss] = PrimalPersistentCharacterStatsStruct()
+    self.data['PlayerDataVersion'] = IntProperty(value=1)
+
     if stream is not None:
       print 'loading from stream'
       while stream.peek(stream.readNullTerminatedString) != 'None':
@@ -345,6 +400,9 @@ class UniqueNetIdRepl(BaseStruct):
       stream.readInt32()
       self.value = stream.readNullTerminatedString()
 
+  def set(self, value=''):
+    self.value = str(value)
+
   def __write_to_binary_stream(self, stream):
     pass
 
@@ -356,12 +414,14 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
   def __init__(self, size=0, stream=None):
     BaseStruct.__init__(self, size=size)
     self.size = size
+
     # Default Values
     self.data['BodyColors'] = [LinearColor()] * 3
     self.data['RawBoneModifiers'] = [FloatProperty(value=0.5)] * 22
     self.data['bIsFemale'] = BoolProperty(value=False)
-    self.data['PlayerCharacterName'] = StrProperty(value='Unknown')
-    self.data['PlayerSpawnRegionIndex'] = IntProperty(value=0)
+    self.data['PlayerCharacterName'] = StrProperty()
+    self.data['PlayerSpawnRegionIndex'] = IntProperty()
+
     if stream is not None:
       # Structs with multiple values end with None
       while stream.peek(stream.readNullTerminatedString) != 'None':
@@ -393,6 +453,13 @@ class LinearColor(BaseStruct):
   def __repr__(self):
     return "(R: %s, G: %s, B: %s, A: %s)" % (self.r, self.g, self.b, self.a)
 
+  def set(self, r=0.0, g=0.0, b=0.0, a=1.0):
+    self.r = float(r)
+    self.g = float(g)
+    self.b = float(b)
+    self.a = float(a)
+
+
 
 class PrimalPersistentCharacterStatsStruct(BaseStruct):
   def __init__(self, size=0, stream=None):
@@ -403,13 +470,11 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
     level_up_string = 'CharacterStatusComponent_NumberOfLevelUpPointsApplied'
     exp_string = 'CharacterStatusComponent_ExperiencePoints'
     levels_string = 'CharacterStatusComponent_ExtraCharacterLevel'
-
     self.data[levels_string] = UInt16Property()
     self.data[exp_string] = FloatProperty()
     self.data['PlayerState_TotalEngramPoints'] = IntProperty()
     self.data[level_up_string] = [ByteProperty()] * 12
     self.data['PlayerState_DefaultItemSlotClasses'] = [None] * 10
-
 
     if stream is not None:
       while stream.peek(stream.readNullTerminatedString) != 'None':

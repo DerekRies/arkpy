@@ -8,51 +8,52 @@ import utils
 import arktypes
 
 from binary import BinaryStream
+from enum import IntEnum
 
 
-BoneModifierIndices = {
-  'Head Size': 0,
-  'Upper Face Size': 15,
-  'Lower Face Size': 16,
-  'Head Width': 19,
-  'Head Height': 18,
-  'Head Depth': 20,
-  'Hand': 8,
-  'Arm Length': 5,
-  'Upper Arm': 6,
-  'Lower Arm': 7,
-  'Neck Size': 1,
-  'Neck Length': 2,
-  'Chest': 3,
-  'Shoulders': 4,
-  'Hip': 13,
-  'Torso Width': 14,
-  'Torso Height': 21,
-  'Torso Depth': 17,
-  'Leg Length': 9,
-  'Upper Leg': 10,
-  'Lower Leg': 11,
-  'Feet': 12,
-}
+class BoneMap(IntEnum):
+  Head_Size = 0
+  Upper_Face_Size = 15
+  Lower_Face_Size = 16
+  Head_Width = 19
+  Head_Height = 18
+  Head_Depth = 20
+  Hand = 8
+  Arm_Length = 5
+  Upper_Arm = 6
+  Lower_Arm = 7
+  Neck_Size = 1
+  Neck_Length = 2
+  Chest = 3
+  Shoulders = 4
+  Hip = 13
+  Torso_Width = 14
+  Torso_Height = 21
+  Torso_Depth = 17
+  Leg_Length = 9
+  Upper_Leg = 10
+  Lower_Leg = 11
+  Feet = 12
 
-StatIndices = {
-  'Health':0,
-  'Stamina':1,
-  'Oxygen':3,
-  'Food':4,
-  'Water':5,
-  'Weight':7,
-  'Melee Damage':8,
-  'Movement Speed':9,
-  'Fortitude':10,
-  'Crafting Speed':11,
-}
 
-BodyColorIndices = {
-  'Skin': 0,
-  'Hair': 1,
-  'Eye': 2,
-}
+class StatMap(IntEnum):
+  Health = 0
+  Stamina = 1
+  Oxygen = 3
+  Food = 4
+  Water = 5
+  Weight = 7
+  Melee_Damage = 8
+  Movement_Speed = 9
+  Fortitude = 10
+  Crafting_Speed = 11
+
+
+class BodyColorMap(IntEnum):
+  Skin = 0
+  Hair = 1
+  Eye = 2
+
 
 def read_variable_data(stream):
   pair = stream.read_pair()
@@ -79,74 +80,42 @@ class Character:
   .arktribe files.
   """
   def __init__(self, stats=None, config=None):
-    self.stats = stats
-    self.config = config
+    self._stats = stats
+    self._config = config
 
-  def get_data_as_dict(self):
-    pass
+  @property
+  def name(self):
+    return self._config.data['PlayerCharacterName']
 
-  def get_name(self):
-    return self.config.data['PlayerCharacterName']
+  @property
+  def body_colors(self):
+    return self._config.data['BodyColors']
 
+  @property
+  def bone_modifiers(self):
+    return self._config.data['RawBoneModifiers']
 
-  def set_name(self, value):
-    self.config.data['PlayerCharacterName'].set(value)
+  @property
+  def spawn_region(self):
+    return self._config.data['PlayerSpawnRegionIndex']
 
-  def get_body_color(self, index, default=None):
-    colors = self.config.data['BodyColors']
-    for color in colors:
-      if color.index == index:
-        return color
-    return default
+  @property
+  def experience(self):
+    return self._stats.data['CharacterStatusComponent_ExperiencePoints']
 
-  def set_body_color(self, index, r=0.0,g=0.0,b=0.0,a=1.0):
-    colors = self.config.data['BodyColors']
-    for color in colors:
-      if color.index == index:
-        color.r = r
-        color.g = g
-        color.b = b
-        color.a = a
+  @property
+  def level_ups(self):
+    ecl = self._stats.data['CharacterStatusComponent_ExtraCharacterLevel']
+    return ecl
 
-  def get_bone_modifier(self, index):
-    pass
+  @property
+  def stat_points(self):
+    s = 'CharacterStatusComponent_NumberOfLevelUpPointsApplied'
+    return self._stats.data[s]
 
-  def set_bone_modifier(self, index, value):
-    pass
-
-  def get_spawn_region(self):
-    pass
-
-  def set_spawn_region(self, index, value):
-    pass
-
-  def get_exp(self):
-    pass
-
-  def set_exp(self, value):
-    pass
-
-  def get_level(self):
-    pass
-
-  def set_level(self, value):
-    pass
-
-  def get_all_stat_points(self):
-    # Returns a Dict of all stats and their point allocations
-    pass
-
-  def get_stat_points(self, index):
-    pass
-
-  def set_stat_points(self, index, value):
-    pass
-
-  def get_engram_points(self):
-    pass
-
-  def set_engram_points(self, value):
-    pass
+  @property
+  def engram_points(self):
+    return self._stats.data['PlayerState_TotalEngramPoints']
 
   def get_engrams(self):
     pass
@@ -329,9 +298,9 @@ class ArkProfile:
           # Only a null-terminated "None" and 4 NULL bytes remaining
         else:
           print 'Can\'t read PlayerLocalData.arkprofile types'
-    self.myData = self.data['MyData']
-    statsstruct = self.data['MyData'].get('MyPersistentCharacterStats')
-    configstruct = self.data['MyData'].get('MyPlayerCharacterConfig')
+    self.myData = self.data.get('MyData', arktypes.PrimalPlayerDataStruct())
+    statsstruct = self.myData.get('MyPersistentCharacterStats')
+    configstruct = self.myData.get('MyPlayerCharacterConfig')
     self.character = Character(stats=statsstruct, config=configstruct)
 
   def save_to_file(self, file_path):
