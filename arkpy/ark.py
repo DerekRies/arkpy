@@ -117,17 +117,30 @@ class Character:
   def engram_points(self):
     return self._stats.data['PlayerState_TotalEngramPoints']
 
-  def get_engrams(self):
-    pass
+  @property
+  def engrams(self):
+    return self._stats.data['PlayerState_EngramBlueprints']
 
-  def add_engram(self, engram_path):
-    pass
+  def add_engram(self, item):
+    self.engrams.value.append(item)
+    self.engrams.length = len(self.engrams.value)
+    # Each item added to ArrayProperty<ObjectProperty> for engrams
+    # 4 Bytes for Prefix (01 00 00 00)
+    # N Bytes for NTString (Int32, String, NULL)
+    item_size = 9 + len(item)
+    self.engrams.size = self.engrams.size + item_size
 
-  def get_default_slot(self, index):
-    pass
+  @property
+  def default_slots(self):
+    return self._stats.data['PlayerState_DefaultItemSlotClasses']
 
-  def set_default_slot(self, index, item_path):
-    pass
+  def set_default_slot(self, index, item):
+    # DEFAULT SLOTS IS NOT ARRAYPROPERTY BUT ACTUAL PYTHON LIST
+    # Default Slots is a list of Object Properties so this method
+    # creates the ObjectProperty from the item string provided
+    # before adding it to the list.
+    o = arktypes.ObjectProperty(value=item)
+    self.default_slots[index] = o
 
 
 

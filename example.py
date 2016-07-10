@@ -8,9 +8,9 @@ from arkpy.ark import BoneMap, StatMap, BodyColorMap
 
 def load_arkprofile():
   # fp = 'data/SavedArksLocal/LocalPlayer.arkprofile'
-  # fp = 'data/TheCenterSavedArksLocal/LocalPlayer.arkprofile'
+  fp = 'data/TheCenterSavedArksLocal/LocalPlayer.arkprofile'
   # fp = 'data/76561197972327357.arkprofile'
-  fp = 'data/LocalPlayerRosetta.arkprofile'
+  # fp = 'data/LocalPlayerRosetta.arkprofile'
   # fp = 'data/LocalProfiles/PlayerLocalData.arkprofile'
   # fp = 'data/1242116633.arktribe'
   profile = ArkProfile(fp)
@@ -19,18 +19,27 @@ def load_arkprofile():
   profile.character.name.set('Hammy')
   print profile.character.name
   print profile.character.body_colors
-  # print profile.character.bone_modifiers
   bones = profile.character.bone_modifiers
-  for bone in BoneMap:
-    print '%s: %s' % (bone.name, bones[bone])
-  stats = profile.character.stat_points
-  for stat in StatMap:
-    print '%s: %s' % (stat.name, stats[stat])
+  print profile.character.engrams.size
+
+  profile.character.add_engram('Campfire')
+  print profile.character.engrams.size
+  # print engrams.value
+  # print profile.myData.data['AppIDSet'].value
+  # print profile.character.default_slots
+  # print profile.character.default_slots[0].value
+  # for bone in BoneMap:
+  #   print '%s: %s' % (bone.name, bones[bone])
+  # stats = profile.character.stat_points
+  # for stat in StatMap:
+  #   print '%s: %s' % (stat.name, stats[stat])
 
 def create_profile():
   profile = ArkProfile()
   profile.character.name.set('Boggsy')
+  print profile.myData.data
   print profile.character._config.data
+  print profile.character._stats.data
 
 def main():
   # fp = 'data/SavedArksLocal/min.arkcharactersetting'

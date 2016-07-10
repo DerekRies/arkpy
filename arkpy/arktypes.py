@@ -16,6 +16,7 @@ import json
 from binary import BinaryStream
 
 debug = True
+# debug = False
 
 
 def load_struct(stream):
@@ -132,7 +133,7 @@ class StrProperty(BaseProperty):
 
 
 class ArrayProperty(BaseProperty):
-  def __init__(self, value=[], child_type='IntProperty', stream=None):
+  def __init__(self, child_type='IntProperty', stream=None):
     # print 'MAKING AN ARRAY PROPERTY!!!!!!'
     BaseProperty.__init__(self)
     conversion_table = {
@@ -148,7 +149,7 @@ class ArrayProperty(BaseProperty):
       'StrProperty': stream.readNullTerminatedString,
       'ObjectProperty': stream.readNullTerminatedString,
     }
-    self.value = value
+    self.value = []
     # An ArrayProperty's size is not the length of items
     # It is the size of the array values in Bytes like every other
     # property/struct
@@ -167,7 +168,7 @@ class ArrayProperty(BaseProperty):
         if self.child_type == 'ObjectProperty':
           stream.readInt32()
           value = stream.readNullTerminatedString()
-          print value
+          # print value
         else:
           value = conversion_table[self.child_type]()
         self.value.append(value)
@@ -177,6 +178,11 @@ class ArrayProperty(BaseProperty):
   def __repr__(self):
     return "[]<%s>(%s)" % (self.child_type, self.length)
     # return "[" + ", ".join(str(x) for x in self.value) + "]<%s>" % self.child_type
+
+  def calc_size(self):
+    # 4 Bytes for length of the array
+    # Sum of all child sizes
+    pass
 
 
 class ByteProperty(BaseProperty):
@@ -200,10 +206,9 @@ class ByteProperty(BaseProperty):
 
 
 class ObjectProperty(BaseProperty):
-  def __init__(self, value=0.0, stream=None):
+  def __init__(self, value='', stream=None):
     BaseProperty.__init__(self)
-    self.value = value
-    self.size = 4
+    self.set(value)
     if stream is not None:
       self.size = stream.readInt32()
       self.index = stream.readInt32()
@@ -212,6 +217,31 @@ class ObjectProperty(BaseProperty):
       # for the type of data to follow, like 1=String?
       prefix = stream.readInt32()
       self.value = stream.readNullTerminatedString()
+
+  def set(self, value):
+    self.value = value
+    self.calc_size()
+
+  def calc_size(self):
+    # 4 Bytes for Prefix (01 00 00 00)
+    # 4 Bytes for string length
+    # N Bytes for N length string
+    # 1 NULL Byte to terminate string
+    self.size = 9 + len(self.value)
+
+  def _write_to_stream(self, array=False):
+    # When not inside of an ArrayProperty the writing of bytes is:
+    # 1. Variable Name as NTString
+    # 2. ObjectProperty as NTString
+    # 3. Size in Bytes as Int32
+    # 4. Index as Int32
+    # 5. Prefix as Int32
+    # 6. Value as NTString
+    #
+    # However, inside of an ArrayProperty only write:
+    # 1. Prefix as Int32
+    # 2. Value as NTString
+    pass
 
 
 class FloatProperty(BaseProperty):
@@ -365,7 +395,7 @@ class BoolProperty(BaseProperty):
 class PrimalPlayerDataStruct(BaseStruct):
   def __init__(self, size=0, stream=None):
     BaseStruct.__init__(self, size=size)
-    print 'PrimalPlayerDataStruct initialized'
+    # print 'PrimalPlayerDataStruct initialized'
     # self.data = {}
     self.size = size
 
@@ -382,7 +412,7 @@ class PrimalPlayerDataStruct(BaseStruct):
     self.data['PlayerDataVersion'] = IntProperty(value=1)
 
     if stream is not None:
-      print 'loading from stream'
+      # print 'loading from stream'
       while stream.peek(stream.readNullTerminatedString) != 'None':
         self.load_and_set_next_property(stream)
       stream.readNullTerminatedString()
