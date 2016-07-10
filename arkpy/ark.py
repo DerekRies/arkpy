@@ -280,6 +280,11 @@ class ArkProfile:
   """
   def __init__(self, file_path=None):
     self.data = {}
+    self.file_type = 'PrimalPlayerData'
+    self.name = 'PrimalPlayerData_%s' % 0
+    self.game_mode = 'PersistentLevel'
+    self.map_name = 'TheIsland'
+    self.map_path = '/Game/Maps/TheIslandSubMaps/TheIsland'
     if file_path is not None:
       with open(file_path, 'rb') as ifile:
         stream = BinaryStream(ifile)
@@ -288,13 +293,13 @@ class ArkProfile:
         if version == 1:
           # Start of Header --------------------------
           stream.readBytes(16)
-          print stream.readNullTerminatedString()
+          self.file_type = stream.readNullTerminatedString()
           stream.readBytes(8)
-          print stream.readNullTerminatedString()
-          print stream.readNullTerminatedString()
-          print stream.readNullTerminatedString()
-          print stream.readNullTerminatedString()
-          print stream.readNullTerminatedString()
+          self.name = stream.readNullTerminatedString()
+          stream.readNullTerminatedString()
+          self.game_mode = stream.readNullTerminatedString()
+          self.map_name = stream.readNullTerminatedString()
+          self.map_path = stream.readNullTerminatedString()
           stream.readBytes(20)
           # End of Header ----------------------------
           print '----------------------------------'
@@ -316,5 +321,42 @@ class ArkProfile:
     configstruct = self.myData.get('MyPlayerCharacterConfig')
     self.character = Character(stats=statsstruct, config=configstruct)
 
+  @property
+  def player_id(self):
+    return self.myData['PlayerDataID']
+
+  @property
+  def unique_id(self):
+    return self.myData['UniqueID']
+
+  @property
+  def network_address(self):
+    return self.myData['SavedNetworkAddress']
+
+  @property
+  def player_name(self):
+    return self.myData['PlayerName']
+
+  @property
+  def first_spawned(self):
+    return self.myData['bFirstSpawned']
+
+  @property
+  def player_version(self):
+    return self.myData['PlayerDataVersion']
+
   def save_to_file(self, file_path):
-    pass
+    with open(file_path, 'wb') as ofile:
+      stream = BinaryStream(ofile)
+      stream.writeInt32(1)
+      stream.writeInt32(1)
+      stream.writeBytesWith(16, 0)
+      stream.writeNullTerminatedString(self.file_type)
+      stream.writeInt32(0)
+      stream.writeInt32(5)
+      stream.writeNullTerminatedString(self.name)
+      stream.writeNullTerminatedString('ArkGameMode')
+      stream.writeNullTerminatedString(self.game_mode)
+      stream.writeNullTerminatedString(self.map_name)
+      stream.writeNullTerminatedString(self.map_path)
+
