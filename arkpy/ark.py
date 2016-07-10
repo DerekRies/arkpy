@@ -77,6 +77,32 @@ class Character:
   CharacterConfig structs that will be used by FileReaders
   that share these structs in common, like .arkprofile and
   .arktribe files.
+
+  Used to have each of the custom StructProperty be responsible
+  for initializing themselves with default properties. But, I
+  decided that it would be cleaner to just leave the file the way
+  it is read and when you try and set a property that doesn't
+  exist, it is created and then set. This has the advantage of not
+  having to decide which values to prune out of the file when
+  saving, because default values are excluded when saved.
+
+  Example: BoneModifier float values of 0.5 are excluded in the
+  files because that is the default, and thus the game just assumes
+  it's 0.5 if it doesn't see it in the file.
+
+  The downside of only initing missing properties when you try
+  and set them is in the case of reading data. If you are trying to
+  read data from the file some properties might not be present.
+
+  As I'm typing this out I realize that this is kind of stupid.
+  There SHOULD be initial values, as anyone using this library
+  likely wants to READ files, and they don't necessarily have the
+  knowledge of default values. Not to mention the convenience of
+  assuming all the data is there and not having to check which
+  values are present and which aren't when reading through.
+
+  I'll keep this branch here just so I can reference this comment
+  block later as my justifications for not taking this approach.
   """
   def __init__(self, stats=None, config=None):
     self.stats = stats
@@ -93,14 +119,16 @@ class Character:
     self.config.data['PlayerCharacterName'].set(value)
 
   def get_body_color(self, index, default=None):
-    colors = self.config.data['BodyColors']
-    for color in colors:
-      if color.index == index:
-        return color
+    colors = self.config.data.get('BodyColors', None)
+    if colors is not None:
+      for color in colors:
+        if color.index == index:
+          return color
     return default
 
   def set_body_color(self, index, r=0.0,g=0.0,b=0.0,a=1.0):
     colors = self.config.data['BodyColors']
+    colors = self.config.data.get('BodyColors', None)
     for color in colors:
       if color.index == index:
         color.r = r
