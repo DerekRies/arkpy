@@ -36,10 +36,18 @@ def load_arkprofile():
 
 def create_profile():
   profile = ArkProfile()
+  profile.player_name.set('Teflon Don')
   profile.character.name.set('Boggsy')
-  print profile.myData.data
-  print profile.character._config.data
-  print profile.character._stats.data
+  print profile.character.name
+  profile.character.bone_modifiers[BoneMap.Chest].set(1.0)
+  profile.character.bone_modifiers[BoneMap.Shoulders].set(0.333)
+  print profile.character.engrams.value.append(arktypes.ObjectProperty('Campfire'))
+  # print profile.myData.data
+  # print profile.character._config.data
+  # print profile.character._stats.data
+  # for key in profile.myData.data:
+    # print key
+  profile.save_to_file('data/testoutput.arkprofile')
 
 def main():
   # fp = 'data/SavedArksLocal/min.arkcharactersetting'
@@ -61,8 +69,8 @@ def main():
   #   bone_sliders[i] = random.random()
   # character.save_to_file(fp)
 
-  load_arkprofile()
-  # create_profile()
+  # load_arkprofile()
+  create_profile()
 
 if __name__ == '__main__':
   main()

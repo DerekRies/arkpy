@@ -168,6 +168,10 @@ class BinaryStream:
         self.writeInt32(vec[1])
         self.writeInt32(vec[2])
 
+    def writeValueListByType(self, values, type_func):
+        for v in values:
+            type_func(v)
+
     def peek(self, readMethod):
         pos = self.tell()
         value = readMethod()

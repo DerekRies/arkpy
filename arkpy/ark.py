@@ -134,14 +134,6 @@ class Character:
   def default_slots(self):
     return self._stats.data['PlayerState_DefaultItemSlotClasses']
 
-  def set_default_slot(self, index, item):
-    # DEFAULT SLOTS IS NOT ARRAYPROPERTY BUT ACTUAL PYTHON LIST
-    # Default Slots is a list of Object Properties so this method
-    # creates the ObjectProperty from the item string provided
-    # before adding it to the list.
-    o = arktypes.ObjectProperty(value=item)
-    self.default_slots[index] = o
-
 
 
 
@@ -309,6 +301,7 @@ class ArkProfile:
             # print 'Struct Property found'
             struct = arktypes.load_struct(stream)
             # print struct.size
+            struct.var_name = var_name
 
             self.data[var_name] = struct
             # self.data = struct
@@ -323,27 +316,27 @@ class ArkProfile:
 
   @property
   def player_id(self):
-    return self.myData['PlayerDataID']
+    return self.myData.data['PlayerDataID']
 
   @property
   def unique_id(self):
-    return self.myData['UniqueID']
+    return self.myData.data['UniqueID']
 
   @property
   def network_address(self):
-    return self.myData['SavedNetworkAddress']
+    return self.myData.data['SavedNetworkAddress']
 
   @property
   def player_name(self):
-    return self.myData['PlayerName']
+    return self.myData.data['PlayerName']
 
   @property
   def first_spawned(self):
-    return self.myData['bFirstSpawned']
+    return self.myData.data['bFirstSpawned']
 
   @property
   def player_version(self):
-    return self.myData['PlayerDataVersion']
+    return self.myData.data['PlayerDataVersion']
 
   def save_to_file(self, file_path):
     with open(file_path, 'wb') as ofile:
@@ -359,4 +352,8 @@ class ArkProfile:
       stream.writeNullTerminatedString(self.game_mode)
       stream.writeNullTerminatedString(self.map_name)
       stream.writeNullTerminatedString(self.map_path)
-
+      stream.writeBytesWith(20, 0)
+      # Struct will call each prop and child structs save methods
+      self.myData._write_to_stream(stream)
+      stream.writeNullTerminatedString('None')
+      stream.writeInt32(0)
