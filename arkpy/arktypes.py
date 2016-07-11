@@ -56,6 +56,12 @@ class BaseProperty():
   def set(self, value):
     self.value = value
 
+  def _write_shared_prop_info(self, stream):
+    stream.writeNullTerminatedString(self.var_name)
+    stream.writeNullTerminatedString(self.__class__.__name__)
+    stream.writeInt32(self.size)
+    stream.writeInt32(self.index)
+
 
 class BaseStruct:
   def __init__(self, size=None):
@@ -150,17 +156,14 @@ class StrProperty(BaseProperty):
   def __repr__(self):
     return '<StrProperty> %s' % self.value
 
-  def _write_to_stream(self, stream):
-    stream.writeNullTerminatedString(self.var_name)
-    stream.writeNullTerminatedString('StrProperty')
-    stream.writeInt32(self.size)
-    stream.writeInt32(self.index)
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
     stream.writeNullTerminatedString(self.value)
 
 
 class ArrayProperty(BaseProperty):
   def __init__(self, child_type='IntProperty', stream=None):
-    # print 'MAKING AN ARRAY PROPERTY!!!!!!'
     BaseProperty.__init__(self)
     self.value = []
     # An ArrayProperty's size is not the length of items
@@ -187,20 +190,14 @@ class ArrayProperty(BaseProperty):
       self.index = stream.readInt32()
       self.child_type = stream.readNullTerminatedString()
       self.length = stream.readInt32()
-      # print 'SIZE: ' + str(self.size)
-      # print 'LENGTH: ' + str(self.length)
       for i in xrange(self.length):
-        # print 'ITEM: ' + str(i)
-        # print stream.readNullTerminatedString()
         if self.child_type == 'ObjectProperty':
           stream.readInt32()
           value = stream.readNullTerminatedString()
-          # print value
         else:
           value = conversion_table[self.child_type]()
-        self.value.append(value)
-        # if self.child_type == 'ObjectProperty' and i != self.length - 1:
-          # Object Properties are separated by 01 00 00 00
+        prop = PROPERTIES[self.child_type](value=value)
+        self.value.append(prop)
 
   def __repr__(self):
     return "[]<%s>(%s)" % (self.child_type, self.length)
@@ -242,11 +239,9 @@ class ByteProperty(BaseProperty):
   def __repr__(self):
     return '<ByteProperty> %s' % self.value
 
-  def _write_to_stream(self, stream):
-    stream.writeNullTerminatedString(self.var_name)
-    stream.writeNullTerminatedString('ByteProperty')
-    stream.writeInt32(self.size)
-    stream.writeInt32(self.index)
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
     stream.writeNullTerminatedString('None')
     stream.writeChar(self.value)
 
@@ -277,26 +272,10 @@ class ObjectProperty(BaseProperty):
     self.size = 9 + len(self.value)
 
   def _write_to_stream(self, stream, array=False):
-    # When not inside of an ArrayProperty the writing of bytes is:
-    # 1. Variable Name as NTString
-    # 2. ObjectProperty as NTString
-    # 3. Size in Bytes as Int32
-    # 4. Index as Int32
-    # 5. Prefix as Int32
-    # 6. Value as NTString
-
     if array == False:
-      stream.writeNullTerminatedString(self.var_name)
-      stream.writeNullTerminatedString('ObjectProperty')
-      stream.writeInt32(self.size)
-      stream.writeInt32(self.index)
+      self._write_shared_prop_info(stream)
     stream.writeInt32(1)
     stream.writeNullTerminatedString(self.value)
-
-    # However, inside of an ArrayProperty only write:
-    # 1. Prefix as Int32
-    # 2. Value as NTString
-    pass
 
 
 class FloatProperty(BaseProperty):
@@ -316,11 +295,9 @@ class FloatProperty(BaseProperty):
   def __repr__(self):
     return '<FloatProperty> %s' % self.value
 
-  def _write_to_stream(self, stream):
-    stream.writeNullTerminatedString(self.var_name)
-    stream.writeNullTerminatedString('FloatProperty')
-    stream.writeInt32(self.size)
-    stream.writeInt32(self.index)
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
     stream.writeFloat(self.value)
 
 
@@ -333,6 +310,11 @@ class DoubleProperty(BaseProperty):
       self.size = stream.readInt32()
       self.index = stream.readInt32()
       self.value = stream.readDouble()
+
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
+    stream.writeDouble(self.value)
 
 
 class Int16Property(BaseProperty):
@@ -351,6 +333,11 @@ class Int16Property(BaseProperty):
   def __repr__(self):
     return '<Int16Property> %s' % self.value
 
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
+    stream.writeInt16(self.value)
+
 
 class UInt16Property(BaseProperty):
   def __init__(self, value=0, stream=None):
@@ -368,11 +355,9 @@ class UInt16Property(BaseProperty):
   def __repr__(self):
     return '<UInt16Property> %s' % self.value
 
-  def _write_to_stream(self, stream):
-    stream.writeNullTerminatedString(self.var_name)
-    stream.writeNullTerminatedString('UInt16Property')
-    stream.writeInt32(self.size)
-    stream.writeInt32(self.index)
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
     stream.writeUInt16(self.value)
 
 
@@ -392,15 +377,13 @@ class IntProperty(BaseProperty):
   def __repr__(self):
     return '<IntProperty> %s' % self.value
 
-  def _write_to_stream(self, stream):
-    stream.writeNullTerminatedString(self.var_name)
-    stream.writeNullTerminatedString('IntProperty')
-    stream.writeInt32(self.size)
-    stream.writeInt32(self.index)
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
     stream.writeInt32(self.value)
 
 
-class UIntProperty(BaseProperty):
+class UInt32Property(BaseProperty):
   def __init__(self, value=0, stream=None):
     BaseProperty.__init__(self)
     self.value = value
@@ -415,6 +398,11 @@ class UIntProperty(BaseProperty):
 
   def __repr__(self):
     return '<UInt32Property> %s' % self.value
+
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
+    stream.writeUInt32(self.value)
 
 
 class Int64Property(BaseProperty):
@@ -433,6 +421,11 @@ class Int64Property(BaseProperty):
   def __repr__(self):
     return '<Int64Property> %s' % self.value
 
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
+    stream.writeInt64(self.value)
+
 
 class UInt64Property(BaseProperty):
   def __init__(self, value=0, stream=None):
@@ -450,11 +443,9 @@ class UInt64Property(BaseProperty):
   def __repr__(self):
     return '<UInt64Property> %s' % self.value
 
-  def _write_to_stream(self, stream):
-    stream.writeNullTerminatedString(self.var_name)
-    stream.writeNullTerminatedString('UInt64Property')
-    stream.writeInt32(self.size)
-    stream.writeInt32(self.index)
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
     stream.writeUInt64(self.value)
 
 
@@ -474,11 +465,9 @@ class BoolProperty(BaseProperty):
   def __repr__(self):
     return '<BoolProperty> %s' % self.value
 
-  def _write_to_stream(self, stream):
-    stream.writeNullTerminatedString(self.var_name)
-    stream.writeNullTerminatedString('BoolProperty')
-    stream.writeInt32(self.size)
-    stream.writeInt32(self.index)
+  def _write_to_stream(self, stream, array=False):
+    if array == False:
+      self._write_shared_prop_info(stream)
     stream.writeBool(self.value)
 
 
@@ -487,19 +476,10 @@ class BoolProperty(BaseProperty):
 class PrimalPlayerDataStruct(BaseStruct):
   def __init__(self, size=0, stream=None):
     BaseStruct.__init__(self, size=size)
-    # print 'PrimalPlayerDataStruct initialized'
     self.size = size
     self.var_name = 'MyData'
 
     # Default Values
-    # self.data['PlayerDataID'] = UInt64Property(value=0)
-    # self.data['UniqueID'] = UniqueNetIdRepl()
-    # self.data['SavedNetworkAddress'] = StrProperty()
-    # self.data['PlayerName'] = StrProperty()
-    # self.data['bFirstSpawned'] = BoolProperty()
-    # self.data[cs] = PrimalPlayerCharacterConfigStruct()
-    # self.data[ss] = PrimalPersistentCharacterStatsStruct()
-    # self.data['PlayerDataVersion'] = IntProperty(value=1)
     self.set('PlayerDataID', UInt64Property(value=0))
     self.set('UniqueID', UniqueNetIdRepl())
     self.set('SavedNetworkAddress', StrProperty())
@@ -510,10 +490,10 @@ class PrimalPlayerDataStruct(BaseStruct):
     ss = 'MyPersistentCharacterStats'
     self.set(ss, PrimalPersistentCharacterStatsStruct())
     self.set('PlayerDataVersion', IntProperty(value=1))
-    # self.set('AppIDSet', ArrayProperty())
+    self.set('AppIDSet', ArrayProperty(child_type='IntProperty'))
+    self.data['AppIDSet'].value.append(IntProperty(value=375350))
 
     if stream is not None:
-      # print 'loading from stream'
       while stream.peek(stream.readNullTerminatedString) != 'None':
         self.load_and_set_next_property(stream)
       stream.readNullTerminatedString()
@@ -529,7 +509,7 @@ class PrimalPlayerDataStruct(BaseStruct):
     self.data['MyPlayerCharacterConfig']._write_to_stream(stream)
     self.data['MyPersistentCharacterStats']._write_to_stream(stream)
     self.data['PlayerDataVersion']._write_to_stream(stream)
-    # Still need to write AppIDSet
+    self.data['AppIDSet']._write_to_stream(stream)
     stream.writeNullTerminatedString('None')
 
 
@@ -633,9 +613,6 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
     levels_string = 'CharacterStatusComponent_ExtraCharacterLevel'
     exp_string = 'CharacterStatusComponent_ExperiencePoints'
     level_up_string = 'CharacterStatusComponent_NumberOfLevelUpPointsApplied'
-    # self.data[levels_string] = UInt16Property()
-    # self.data[exp_string] = FloatProperty()
-    # self.data['PlayerState_TotalEngramPoints'] = IntProperty()
 
     self.set(levels_string, UInt16Property())
     self.set(exp_string, FloatProperty())
@@ -646,8 +623,6 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
     self.set(level_up_string, lvlups)
     default_slots = [ObjectProperty(index=i) for i in xrange(10)]
     self.set('PlayerState_DefaultItemSlotClasses', default_slots)
-    # self.data['PlayerState_DefaultItemSlotClasses'] = [None] * 10
-
 
     if stream is not None:
       while stream.peek(stream.readNullTerminatedString) != 'None':
@@ -674,8 +649,8 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
 
 PROPERTIES = {
   'IntProperty': IntProperty,
-  'UIntProperty': UIntProperty,
-  'UInt32Property': UIntProperty,
+  'UIntProperty': UInt32Property,
+  'UInt32Property': UInt32Property,
   'Int16Property': Int16Property,
   'UInt16Property': UInt16Property,
   'Int64Property': Int64Property,

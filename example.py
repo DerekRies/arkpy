@@ -8,22 +8,28 @@ from arkpy.ark import BoneMap, StatMap, BodyColorMap
 
 def load_arkprofile():
   # fp = 'data/SavedArksLocal/LocalPlayer.arkprofile'
-  fp = 'data/TheCenterSavedArksLocal/LocalPlayer.arkprofile'
+  # fp = 'data/TheCenterSavedArksLocal/LocalPlayer.arkprofile'
   # fp = 'data/76561197972327357.arkprofile'
   # fp = 'data/LocalPlayerRosetta.arkprofile'
   # fp = 'data/LocalProfiles/PlayerLocalData.arkprofile'
   # fp = 'data/1242116633.arktribe'
+  fp = 'data/testoutput.arkprofile'
   profile = ArkProfile(fp)
   # profile.character.set_name('Hammy')
   # print profile.character.get_name()
-  profile.character.name.set('Hammy')
+  # profile.character.name.set('Hammy')
   print profile.character.name
   print profile.character.body_colors
   bones = profile.character.bone_modifiers
-  print profile.character.engrams.size
 
-  profile.character.add_engram('Campfire')
-  print profile.character.engrams.size
+  print 'engrams------------------'
+  print len(profile.character.engrams.value)
+
+  # for engram in profile.character.engrams.value:
+    # print engram.value
+
+  # profile.character.add_engram('Campfire')
+  # print len(profile.character.engrams.value)
   # print engrams.value
   # print profile.myData.data['AppIDSet'].value
   # print profile.character.default_slots
