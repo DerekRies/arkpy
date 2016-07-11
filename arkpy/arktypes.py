@@ -24,10 +24,6 @@ def load_struct(stream):
   size = stream.readInt32()
   index = stream.readInt32()
   name = stream.readNullTerminatedString()
-  # print size
-  # print name
-  # struct_to_use = STRUCTS.get(name, PrimalPlayerDataStruct)
-  # struct = struct_to_use(size=size, stream=stream)
   struct = STRUCTS[name](size=size, stream=stream)
   struct.index = index
   return struct
@@ -48,10 +44,6 @@ class BaseProperty():
     self.index = 0
     self.size = 0
     self.var_name = ''
-  # def __repr__(self):
-  #   return str(self.value)
-  # def __str__(self):
-  #   return str(self.value)
 
   def set(self, value):
     self.value = value
@@ -61,6 +53,9 @@ class BaseProperty():
     stream.writeNullTerminatedString(self.__class__.__name__)
     stream.writeInt32(self.size)
     stream.writeInt32(self.index)
+
+  def __repr__(self):
+    return '<%s> %s' % (self.__class__.__name__, self.value)
 
 
 class BaseStruct:
@@ -89,12 +84,6 @@ class BaseStruct:
     an array, their differentiator is a little Int32 index field.
     """
 
-    # TODO: Making Default values already instantiated on structs
-    # so you can assume any index-based values like BodyColor,
-    # BoneModifiers, and LevelUps is already a list with default values
-    # Just go to the index of that list and update it with the now
-    # read value.
-
     name, prop_type, value = load_property(stream)
     value.var_name = name
     if self.data.get(name, None) is not None:
@@ -118,11 +107,6 @@ class BaseStruct:
       print "Struct Type: %s" % self.__class__.__name__
       print self.data
       print '----------------------------------------'
-    # print value.index
-  # def __repr__(self):
-  #   return json.dumps(self.data)
-  # def __str__(self):
-  #   return json.dumps(self.data)
 
   def _write_shared_struct_info(self, stream):
     stream.writeNullTerminatedString(self.var_name)
@@ -152,9 +136,6 @@ class StrProperty(BaseProperty):
     # 1 NULL Byte to terminate the string
     self.size = 5 + len(self.value)
     return self.size
-
-  def __repr__(self):
-    return '<StrProperty> %s' % self.value
 
   def _write_to_stream(self, stream, array=False):
     if array == False:
@@ -236,9 +217,6 @@ class ByteProperty(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
-  def __repr__(self):
-    return '<ByteProperty> %s' % self.value
-
   def _write_to_stream(self, stream, array=False):
     if array == False:
       self._write_shared_prop_info(stream)
@@ -292,9 +270,6 @@ class FloatProperty(BaseProperty):
   def set(self, value=0.0):
     self.value = float(value)
 
-  def __repr__(self):
-    return '<FloatProperty> %s' % self.value
-
   def _write_to_stream(self, stream, array=False):
     if array == False:
       self._write_shared_prop_info(stream)
@@ -330,9 +305,6 @@ class Int16Property(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
-  def __repr__(self):
-    return '<Int16Property> %s' % self.value
-
   def _write_to_stream(self, stream, array=False):
     if array == False:
       self._write_shared_prop_info(stream)
@@ -351,9 +323,6 @@ class UInt16Property(BaseProperty):
 
   def set(self, value=0):
     self.value = int(value)
-
-  def __repr__(self):
-    return '<UInt16Property> %s' % self.value
 
   def _write_to_stream(self, stream, array=False):
     if array == False:
@@ -374,9 +343,6 @@ class IntProperty(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
-  def __repr__(self):
-    return '<IntProperty> %s' % self.value
-
   def _write_to_stream(self, stream, array=False):
     if array == False:
       self._write_shared_prop_info(stream)
@@ -395,9 +361,6 @@ class UInt32Property(BaseProperty):
 
   def set(self, value=0):
     self.value = int(value)
-
-  def __repr__(self):
-    return '<UInt32Property> %s' % self.value
 
   def _write_to_stream(self, stream, array=False):
     if array == False:
@@ -418,9 +381,6 @@ class Int64Property(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
-  def __repr__(self):
-    return '<Int64Property> %s' % self.value
-
   def _write_to_stream(self, stream, array=False):
     if array == False:
       self._write_shared_prop_info(stream)
@@ -440,9 +400,6 @@ class UInt64Property(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
-  def __repr__(self):
-    return '<UInt64Property> %s' % self.value
-
   def _write_to_stream(self, stream, array=False):
     if array == False:
       self._write_shared_prop_info(stream)
@@ -461,9 +418,6 @@ class BoolProperty(BaseProperty):
 
   def set(self, value=True):
     self.value = bool(value)
-
-  def __repr__(self):
-    return '<BoolProperty> %s' % self.value
 
   def _write_to_stream(self, stream, array=False):
     if array == False:
