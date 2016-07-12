@@ -16,8 +16,8 @@ import itertools
 
 from binary import BinaryStream
 
-debug = True
-# debug = False
+# debug = True
+debug = False
 
 
 def load_struct(stream):

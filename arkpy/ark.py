@@ -6,6 +6,7 @@ file types.
 import random
 import utils
 import arktypes
+import warnings
 
 from binary import BinaryStream
 from enum import IntEnum
@@ -84,6 +85,8 @@ class Character:
   .arktribe files.
   """
   def __init__(self, stats=None, config=None):
+    if stats is None and config is None:
+      warnings.warn('You probably want to create an ArkProfile instead.')
     self._stats = stats
     self._config = config
 

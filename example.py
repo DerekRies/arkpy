@@ -18,8 +18,8 @@ def load_arkprofile():
   # profile.character.set_name('Hammy')
   # print profile.character.get_name()
   # profile.character.name.set('Hammy')
-  print profile.character.name
-  print profile.character.body_colors
+  # print profile.character.name
+  # print profile.character.body_colors
   bones = profile.character.bone_modifiers
 
   # print 'engrams------------------'
