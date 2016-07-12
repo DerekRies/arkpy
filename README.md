@@ -30,6 +30,15 @@ file_path = 'data/SavedArksLocal/LocalPlayer.arkprofile'
 profile = ArkProfile(file_path)
 
 print profile.character.name
+print profile.character.level_ups
+print profile.character.experience
+print profile.character.engram_points
+
+# Get all the Stat points allocated and print them with a string
+# identifying which stat they are
+stats = profile.character.stat_points
+for stat in StatMap:
+  print '%s: %s' % (stat.name, stats[stat])
 
 # Get all the BoneModifier values and print them with a string
 # identifying which bone it is
