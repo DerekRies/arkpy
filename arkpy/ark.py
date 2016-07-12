@@ -88,6 +88,10 @@ class Character:
     return self._config.data['PlayerCharacterName']
 
   @property
+  def isFemale(self):
+    return self._config.data['bIsFemale']
+
+  @property
   def body_colors(self):
     return self._config.data['BodyColors']
 

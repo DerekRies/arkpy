@@ -67,9 +67,12 @@ class BaseProperty():
     return ws
 
   def _calc_size(self):
-    ws = self._calc_wrapper_size()
-    self.wrapped_size = ws + self.size
-    return self.wrapped_size
+    if self.included:
+      ws = self._calc_wrapper_size()
+      self.wrapped_size = ws + self.size
+      return self.wrapped_size
+    else:
+      return 0
 
   def __repr__(self):
     return '<%s> %s' % (self.__class__.__name__, self.value)
@@ -183,9 +186,10 @@ class StrProperty(BaseProperty):
     return self.size
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeNullTerminatedString(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeNullTerminatedString(self.value)
 
 
 class ArrayProperty(BaseProperty):
@@ -284,17 +288,21 @@ class ByteProperty(BaseProperty):
     self.value = int(value)
 
   def _calc_size(self):
-    ws = self._calc_wrapper_size()
-    # NTString 'None' needs to be counted
-    ws = ws + 9
-    self.wrapped_size = ws + self.size
-    return self.wrapped_size
+    if self.included:
+      ws = self._calc_wrapper_size()
+      # NTString 'None' needs to be counted
+      ws = ws + 9
+      self.wrapped_size = ws + self.size
+      return self.wrapped_size
+    else:
+      return 0
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeNullTerminatedString('None')
-    stream.writeChar(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeNullTerminatedString('None')
+      stream.writeChar(self.value)
 
 
 
@@ -324,16 +332,20 @@ class ObjectProperty(BaseProperty):
     return self.size
 
   def _calc_size(self):
-    self._calc_inner_size()
-    ws = self._calc_wrapper_size()
-    self.wrapped_size = ws + self.size
-    return self.wrapped_size
+    if self.included:
+      self._calc_inner_size()
+      ws = self._calc_wrapper_size()
+      self.wrapped_size = ws + self.size
+      return self.wrapped_size
+    else:
+      return 0
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeInt32(1)
-    stream.writeNullTerminatedString(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeInt32(1)
+      stream.writeNullTerminatedString(self.value)
 
 
 class FloatProperty(BaseProperty):
@@ -351,9 +363,10 @@ class FloatProperty(BaseProperty):
     self.value = float(value)
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeFloat(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeFloat(self.value)
 
 
 class DoubleProperty(BaseProperty):
@@ -370,9 +383,10 @@ class DoubleProperty(BaseProperty):
     self.value = float(value)
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeDouble(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeDouble(self.value)
 
 
 class Int16Property(BaseProperty):
@@ -389,9 +403,10 @@ class Int16Property(BaseProperty):
     self.value = int(value)
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeInt16(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeInt16(self.value)
 
 
 class UInt16Property(BaseProperty):
@@ -408,9 +423,10 @@ class UInt16Property(BaseProperty):
     self.value = int(value)
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeUInt16(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeUInt16(self.value)
 
 
 class IntProperty(BaseProperty):
@@ -427,9 +443,10 @@ class IntProperty(BaseProperty):
     self.value = int(value)
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeInt32(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeInt32(self.value)
 
 
 class UInt32Property(BaseProperty):
@@ -446,9 +463,10 @@ class UInt32Property(BaseProperty):
     self.value = int(value)
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeUInt32(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeUInt32(self.value)
 
 
 class Int64Property(BaseProperty):
@@ -465,9 +483,10 @@ class Int64Property(BaseProperty):
     self.value = int(value)
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeInt64(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeInt64(self.value)
 
 
 class UInt64Property(BaseProperty):
@@ -484,9 +503,10 @@ class UInt64Property(BaseProperty):
     self.value = int(value)
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeUInt64(self.value)
+    if self.included:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeUInt64(self.value)
 
 
 class BoolProperty(BaseProperty):
@@ -503,9 +523,10 @@ class BoolProperty(BaseProperty):
     self.value = bool(value)
 
   def _write_to_stream(self, stream, array=False):
-    if array == False:
-      self._write_shared_prop_info(stream)
-    stream.writeBool(self.value)
+    if self.value:
+      if array == False:
+        self._write_shared_prop_info(stream)
+      stream.writeBool(self.value)
 
   def _calc_size(self):
   # BoolPropertys are a bit of a Heisenbug when it comes to
@@ -515,9 +536,12 @@ class BoolProperty(BaseProperty):
   # ObjectProperty or ArrayProperty types to calculate their size
   # there will be 1 more Byte in the file than what the size says
   # it is, because the size and true size don't match.
-    ws = self._calc_wrapper_size()
-    self.wrapped_size = ws + 1
-    return self.wrapped_size
+    if self.value:
+      ws = self._calc_wrapper_size()
+      self.wrapped_size = ws + 1
+      return self.wrapped_size
+    else:
+      return 0
 
 
 # ArkProfile Structures ----------------------------------
@@ -547,8 +571,15 @@ class PrimalPlayerDataStruct(BaseStruct):
         self.load_and_set_next_property(stream)
       stream.readNullTerminatedString()
 
+  def _exclude(self):
+    if self.data['SavedNetworkAddress'].value == '':
+      self.data['SavedNetworkAddress'].included = False
+    self.data['MyPlayerCharacterConfig']._exclude()
+    self.data['MyPersistentCharacterStats']._exclude()
+
   def _write_to_stream(self, stream):
     print 'calculating sizes'
+    self._exclude()
     self._calc_size()
     print 'writing player data struct'
     self._write_shared_struct_info(stream)
@@ -616,6 +647,12 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
       # Remember to read the None to advance position past it when done
       stream.readNullTerminatedString()
 
+  def _exclude(self):
+    # colors
+    for bone in self.data['RawBoneModifiers']:
+      if bone.value == 0.5:
+        bone.included = False
+
   def _write_to_stream(self, stream):
     self._write_shared_struct_info(stream)
     for color in self.data['BodyColors']:
@@ -658,12 +695,12 @@ class LinearColor(BaseStruct):
     return "(R: %s, G: %s, B: %s, A: %s)" % (self.r, self.g, self.b, self.a)
 
   def _write_to_stream(self, stream):
-    self._write_shared_struct_info(stream)
-    stream.writeFloat(self.r)
-    stream.writeFloat(self.g)
-    stream.writeFloat(self.b)
-    stream.writeFloat(self.a)
-
+    if self.included:
+      self._write_shared_struct_info(stream)
+      stream.writeFloat(self.r)
+      stream.writeFloat(self.g)
+      stream.writeFloat(self.b)
+      stream.writeFloat(self.a)
 
 
 class PrimalPersistentCharacterStatsStruct(BaseStruct):
@@ -682,15 +719,35 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
     self.set('PlayerState_EngramBlueprints', learned_engrams)
     lvlups = [ByteProperty(index=i) for i in xrange(12)]
     self.set(level_up_string, lvlups)
-    # self.set(level_up_string, [])
     default_slots = [ObjectProperty(index=i) for i in xrange(10)]
     self.set('PlayerState_DefaultItemSlotClasses', default_slots)
-    # self.set('PlayerState_DefaultItemSlotClasses', [])
 
     if stream is not None:
       while stream.peek(stream.readNullTerminatedString) != 'None':
         self.load_and_set_next_property(stream)
       stream.readNullTerminatedString()
+
+  def _exclude(self):
+    # Experience Points
+    exp_string = 'CharacterStatusComponent_ExperiencePoints'
+    if self.data[exp_string].value == 0.0:
+      self.data[exp_string].included = False
+    # Levels
+    levels_string = 'CharacterStatusComponent_ExtraCharacterLevel'
+    if self.data[levels_string].value == 0:
+      self.data[levels_string].included = False
+    # Engram Points
+    if self.data['PlayerState_TotalEngramPoints'].value == 0:
+      self.data['PlayerState_TotalEngramPoints'].included = False
+    # Stat Points
+    l = self.data['CharacterStatusComponent_NumberOfLevelUpPointsApplied']
+    for lvlup in l:
+      if lvlup.value == 0:
+        lvlup.included = False
+    # Default Slots
+    for slot in self.data['PlayerState_DefaultItemSlotClasses']:
+      if slot.value == '':
+        slot.included = False
 
   def _write_to_stream(self, stream):
     self._write_shared_struct_info(stream)
