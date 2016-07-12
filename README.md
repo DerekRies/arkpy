@@ -22,7 +22,7 @@ For those interested in the reverse engineering of the file types the specificat
 ## Usage
 
 #### Reading an .arkprofile file
-```
+```python
 from arkpy.ark import ArkProfile
 from arkpy.ark import BoneMap, StatMap, BodyColorMap
 
