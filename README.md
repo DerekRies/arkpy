@@ -1,6 +1,8 @@
 ARKpy
 ====
 
+**v0.0**
+
 ARKpy is a library for reading and writing the file formats of ARK: Survival Evolved with the python programming language.
 
 For those interested in the reverse engineering of the file types the specifications can be found among the library docs.
@@ -9,7 +11,6 @@ For those interested in the reverse engineering of the file types the specificat
  - Read and Write the following file types
     - **.arkprofile** (Individual player files)
     - **.arkcharactersetting** (Character creator preset files)
-    - **.arktribe** (soon)
  - Create new characters or tribes dynamically
  - Friendly API wrapper around the data
  - Maps to enumerate through and identify the proper index for:
