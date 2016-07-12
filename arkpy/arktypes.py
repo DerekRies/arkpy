@@ -24,7 +24,8 @@ def load_struct(stream):
   size = stream.readInt32()
   index = stream.readInt32()
   name = stream.readNullTerminatedString()
-  struct = STRUCTS[name](size=size, stream=stream)
+  struct = STRUCTS[name](stream=stream)
+  struct.size = size
   struct.index = index
   return struct
 

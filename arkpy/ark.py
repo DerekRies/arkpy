@@ -11,6 +11,10 @@ from binary import BinaryStream
 from enum import IntEnum
 
 
+class WrongFileType(Exception):
+  pass
+
+
 class BoneMap(IntEnum):
   Head_Size = 0
   Upper_Face_Size = 15
@@ -137,8 +141,6 @@ class Character:
   @property
   def default_slots(self):
     return self._stats.data['PlayerState_DefaultItemSlotClasses']
-
-
 
 
 class ArkCharacterSetting:
@@ -312,7 +314,7 @@ class ArkProfile:
           print self.data
           # Only a null-terminated "None" and 4 NULL bytes remaining
         else:
-          print 'Can\'t read PlayerLocalData.arkprofile types'
+          raise WrongFileType("PlayerLocalData.arkprofile files unsupported")
     self.myData = self.data.get('MyData', arktypes.PrimalPlayerDataStruct())
     statsstruct = self.myData.get('MyPersistentCharacterStats')
     configstruct = self.myData.get('MyPlayerCharacterConfig')
@@ -342,22 +344,25 @@ class ArkProfile:
   def player_version(self):
     return self.myData.data['PlayerDataVersion']
 
+  def _write_header_to_stream(self, stream):
+    stream.writeInt32(1)
+    stream.writeInt32(1)
+    stream.writeBytesWith(16, 0)
+    stream.writeNullTerminatedString(self.file_type)
+    stream.writeInt32(0)
+    stream.writeInt32(5)
+    stream.writeNullTerminatedString(self.name)
+    stream.writeNullTerminatedString('ArkGameMode')
+    stream.writeNullTerminatedString(self.game_mode)
+    stream.writeNullTerminatedString(self.map_name)
+    stream.writeNullTerminatedString(self.map_path)
+    stream.writeBytesWith(20, 0)
+
   def save_to_file(self, file_path):
     with open(file_path, 'wb') as ofile:
       stream = BinaryStream(ofile)
-      stream.writeInt32(1)
-      stream.writeInt32(1)
-      stream.writeBytesWith(16, 0)
-      stream.writeNullTerminatedString(self.file_type)
-      stream.writeInt32(0)
-      stream.writeInt32(5)
-      stream.writeNullTerminatedString(self.name)
-      stream.writeNullTerminatedString('ArkGameMode')
-      stream.writeNullTerminatedString(self.game_mode)
-      stream.writeNullTerminatedString(self.map_name)
-      stream.writeNullTerminatedString(self.map_path)
-      stream.writeBytesWith(20, 0)
-      # Struct will call each prop and child structs save methods
+      self._write_header_to_stream(stream)
+      # Struct will call each prop and child structs write methods
       self.myData._write_to_stream(stream)
       stream.writeNullTerminatedString('None')
       stream.writeInt32(0)
