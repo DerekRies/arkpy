@@ -11,6 +11,7 @@ For those interested in the reverse engineering of the file types the specificat
  - Read and Write the following file types
     - **.arkprofile** (Individual player files)
     - **.arkcharactersetting** (Character creator preset files)
+    - **.arktribe** (soon)
  - Create new characters or tribes dynamically
  - Friendly API wrapper around the data
  - Maps to enumerate through and identify the proper index for:
