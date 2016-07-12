@@ -280,6 +280,13 @@ class ByteProperty(BaseProperty):
   def set(self, value=0):
     self.value = int(value)
 
+  def _calc_size(self):
+    ws = self._calc_wrapper_size()
+    # NTString 'None' needs to be counted
+    ws = ws + 9
+    self.wrapped_size = ws + self.size
+    return self.wrapped_size
+
   def _write_to_stream(self, stream, array=False):
     if array == False:
       self._write_shared_prop_info(stream)
@@ -669,11 +676,13 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
     self.set(exp_string, FloatProperty())
     self.set('PlayerState_TotalEngramPoints', IntProperty())
     learned_engrams = ArrayProperty(child_type='ObjectProperty')
-    self.set('PlayerState_EngramBlueprints', learned_engrams)
+    # self.set('PlayerState_EngramBlueprints', learned_engrams)
     lvlups = [ByteProperty(index=i) for i in xrange(12)]
     self.set(level_up_string, lvlups)
+    # self.set(level_up_string, [])
     default_slots = [ObjectProperty(index=i) for i in xrange(10)]
     self.set('PlayerState_DefaultItemSlotClasses', default_slots)
+    # self.set('PlayerState_DefaultItemSlotClasses', [])
 
     if stream is not None:
       while stream.peek(stream.readNullTerminatedString) != 'None':
@@ -688,7 +697,7 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
     self.data[levels_string]._write_to_stream(stream)
     self.data[exp_string]._write_to_stream(stream)
     self.data['PlayerState_TotalEngramPoints']._write_to_stream(stream)
-    self.data['PlayerState_EngramBlueprints']._write_to_stream(stream)
+    # self.data['PlayerState_EngramBlueprints']._write_to_stream(stream)
     for lvlup in self.data[level_up_string]:
       lvlup._write_to_stream(stream)
     for slot in self.data['PlayerState_DefaultItemSlotClasses']:
