@@ -46,8 +46,8 @@ def create_profile():
   profile.character.name.set('Boggsy')
   print profile.character.name
   print profile.character.level_ups
-  profile.character.bone_modifiers[BoneMap.Chest].set(1.0)
-  profile.character.bone_modifiers[BoneMap.Shoulders].set(0.333)
+  # profile.character.bone_modifiers[BoneMap.Chest].set(1.0)
+  # profile.character.bone_modifiers[BoneMap.Shoulders].set(0.333)
   # print profile.myData.data
   # print profile.character._config.data
   # print profile.character._stats.data

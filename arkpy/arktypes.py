@@ -43,7 +43,9 @@ class BaseProperty():
     self.value=value
     self.index = 0
     self.size = 0
+    self.wrapped_size = 0
     self.var_name = ''
+    self.included = True
 
   def set(self, value):
     self.value = value
@@ -54,16 +56,33 @@ class BaseProperty():
     stream.writeInt32(self.size)
     stream.writeInt32(self.index)
 
+  def _calc_inner_size(self):
+    return self.size
+
+  def _calc_wrapper_size(self):
+    # 5 Bytes for each NTString
+    ws = len(self.var_name) + len(self.__class__.__name__) + 10
+    # 4 Bytes for two Int32s (innersize, index)
+    ws = ws + 8
+    return ws
+
+  def _calc_size(self):
+    ws = self._calc_wrapper_size()
+    self.wrapped_size = ws + self.size
+    return self.wrapped_size
+
   def __repr__(self):
     return '<%s> %s' % (self.__class__.__name__, self.value)
 
 
 class BaseStruct:
-  def __init__(self, size=None):
+  def __init__(self):
     self.data = {}
     self.size = 0
+    self.wrapped_size = 0
     self.index = 0
     self.var_name = ''
+    self.included = True
 
   def get(self, key):
     return self.data[key]
@@ -83,7 +102,6 @@ class BaseStruct:
     some fields in Ark File formats use the same name, but are not
     an array, their differentiator is a little Int32 index field.
     """
-
     name, prop_type, value = load_property(stream)
     value.var_name = name
     if self.data.get(name, None) is not None:
@@ -94,12 +112,6 @@ class BaseStruct:
           self.data[name][value.index] = value
       else:
         self.data[name] = value
-      # first_item = self.data.get(name, None)
-      # if first_item is None:
-      #   self.data[name] = []
-      # elif isinstance(first_item, list) is False:
-      #   self.data[name] = [first_item]
-      # self.data[name].append(value)
     else:
       self.data[name] = value
     if debug:
@@ -107,6 +119,42 @@ class BaseStruct:
       print "Struct Type: %s" % self.__class__.__name__
       print self.data
       print '----------------------------------------'
+
+  def _calc_inner_size(self):
+    size = 0
+    for key in self.data:
+      if isinstance(self.data[key], list):
+        for val in self.data[key]:
+          if val.included:
+            size = size + val._calc_size()
+      else:
+        if self.data[key].included:
+          # try:
+          size = size + self.data[key]._calc_size()
+          # except TypeError:
+            # print key
+    # NTString 'None' Bytes included
+    self.size = size + 9
+    return self.size
+
+  def _calc_wrapper_size(self):
+    # 5 Bytes for each NTString
+    ws = len(self.var_name) + len(self.__class__.__name__) + 10
+    # 19 Bytes for StructProperty NTString
+    ws = ws + 19
+    # 4 Bytes for two Int32s (innersize, index)
+    ws = ws + 8
+    return ws
+
+  def _calc_size(self):
+    # A structs size is the sum of all its non-default children's
+    # wrapped_sizes.
+    # The wrapped size is the size of the value + the bytes for the
+    # variable name, variable type, (and sub-type if struct+available)
+    self._calc_inner_size()
+    ws = self._calc_wrapper_size()
+    self.wrapped_size = ws + self.size
+    return self.wrapped_size
 
   def _write_shared_struct_info(self, stream):
     stream.writeNullTerminatedString(self.var_name)
@@ -128,12 +176,9 @@ class StrProperty(BaseProperty):
 
   def set(self, value):
     self.value = str(value)
-    self.calc_size()
+    self.size = 5 + len(self.value)
 
-  def calc_size(self):
-    # 4 Bytes for the Int32 specifying length
-    # N Bytes for the string's characters
-    # 1 NULL Byte to terminate the string
+  def _calc_inner_size(self):
     self.size = 5 + len(self.value)
     return self.size
 
@@ -182,12 +227,30 @@ class ArrayProperty(BaseProperty):
 
   def __repr__(self):
     return "[]<%s>(%s)" % (self.child_type, self.length)
-    # return "[" + ", ".join(str(x) for x in self.value) + "]<%s>" % self.child_type
 
-  def calc_size(self):
-    # 4 Bytes for length of the array
-    # Sum of all child sizes
-    pass
+  def _calc_inner_size(self):
+    print 'Calculating ArrayProperty Inner Size'
+    size = 4
+    for val in self.value:
+      size = size + val._calc_inner_size()
+    self.size = size
+    return self.size
+
+  def _calc_wrapper_size(self):
+    # 5 Bytes for each NTString
+    ws = len(self.var_name) + len(self.child_type) + 10
+    # 18 Bytes for ArrayProperty NTString
+    ws = ws + 18
+    # 4 Bytes for two Int32s (innersize, index)
+    ws = ws + 8
+    return ws
+
+  def _calc_size(self):
+    self._calc_inner_size()
+    # Another 18 Bytes for ArrayProperty
+    ws = self._calc_wrapper_size()
+    self.wrapped_size = ws + self.size
+    return self.wrapped_size
 
   def _write_to_stream(self, stream):
     if len(self.value) > 0:
@@ -206,7 +269,7 @@ class ByteProperty(BaseProperty):
     BaseProperty.__init__(self)
     self.value = value
     self.index = index
-    self.size = 4
+    self.size = 1
     if stream is not None:
       self.size = stream.readInt32()
       self.index = stream.readInt32()
@@ -242,12 +305,19 @@ class ObjectProperty(BaseProperty):
   def set(self, value):
     self.value = value
 
-  def calc_size(self):
+  def _calc_inner_size(self):
     # 4 Bytes for Prefix (01 00 00 00)
     # 4 Bytes for string length
     # N Bytes for N length string
     # 1 NULL Byte to terminate string
     self.size = 9 + len(self.value)
+    return self.size
+
+  def _calc_size(self):
+    self._calc_inner_size()
+    ws = self._calc_wrapper_size()
+    self.wrapped_size = ws + self.size
+    return self.wrapped_size
 
   def _write_to_stream(self, stream, array=False):
     if array == False:
@@ -285,6 +355,9 @@ class DoubleProperty(BaseProperty):
       self.size = stream.readInt32()
       self.index = stream.readInt32()
       self.value = stream.readDouble()
+
+  def set(self, value=0.0):
+    self.value = float(value)
 
   def _write_to_stream(self, stream, array=False):
     if array == False:
@@ -424,12 +497,24 @@ class BoolProperty(BaseProperty):
       self._write_shared_prop_info(stream)
     stream.writeBool(self.value)
 
+  def _calc_size(self):
+  # BoolPropertys are a bit of a Heisenbug when it comes to
+  # their size. When they are written their size value is always
+  # 0, but their true size is of course 1 Byte. Because
+  # when it comes time for structs and container properties like
+  # ObjectProperty or ArrayProperty types to calculate their size
+  # there will be 1 more Byte in the file than what the size says
+  # it is, because the size and true size don't match.
+    ws = self._calc_wrapper_size()
+    self.wrapped_size = ws + 1
+    return self.wrapped_size
+
 
 # ArkProfile Structures ----------------------------------
 
 class PrimalPlayerDataStruct(BaseStruct):
   def __init__(self, size=0, stream=None):
-    BaseStruct.__init__(self, size=size)
+    BaseStruct.__init__(self)
     self.size = size
     self.var_name = 'MyData'
 
@@ -453,6 +538,8 @@ class PrimalPlayerDataStruct(BaseStruct):
       stream.readNullTerminatedString()
 
   def _write_to_stream(self, stream):
+    print 'calculating sizes'
+    self._calc_size()
     print 'writing player data struct'
     self._write_shared_struct_info(stream)
     self.data['PlayerDataID']._write_to_stream(stream)
@@ -468,9 +555,9 @@ class PrimalPlayerDataStruct(BaseStruct):
 
 
 class UniqueNetIdRepl(BaseStruct):
-  def __init__(self, size=0, stream=None):
-    BaseStruct.__init__(self, size=size)
-    self.size = size
+  def __init__(self, stream=None):
+    BaseStruct.__init__(self)
+    self.size = 26
     self.value = '00000000000000000'
     if stream is not None:
       stream.readInt32()
@@ -487,12 +574,16 @@ class UniqueNetIdRepl(BaseStruct):
   def __repr__(self):
     return str(self.__class__.__name__) + ': ' + str(self.value)
 
+  def _calc_size(self):
+    self.size = len(self.value) + 9
+    ws = self._calc_wrapper_size()
+    self.wrapped_size = ws + self.size
+    return self.wrapped_size
+
 
 class PrimalPlayerCharacterConfigStruct(BaseStruct):
-  def __init__(self, size=0, stream=None):
-    BaseStruct.__init__(self, size=size)
-    self.size = size
-
+  def __init__(self, stream=None):
+    BaseStruct.__init__(self)
     # Default Values
     # Setting the index values from the loop in the init
     # because EVERY other solution I tried, including closures
@@ -500,8 +591,10 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
     # and assigning the same index value to every single list item
     colors = [LinearColor(index=i) for i in xrange(3)]
     self.set('BodyColors', colors)
+    # self.set('BodyColors', [])
     bones = [FloatProperty(value=0.5, index=j) for j in xrange(22)]
     self.set('RawBoneModifiers', bones)
+    # self.set('RawBoneModifiers', [])
     self.set('bIsFemale', BoolProperty(value=False))
     self.set('PlayerCharacterName', StrProperty())
     self.set('PlayerSpawnRegionIndex', IntProperty())
@@ -526,7 +619,7 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
 
 
 class LinearColor(BaseStruct):
-  def __init__(self, size=16, r=0.0, g=0.0, b=0.0, a=1.0, stream=None, index=0):
+  def __init__(self, r=0.0, g=0.0, b=0.0, a=1.0, stream=None, index=0):
     BaseStruct.__init__(self)
     self.size = 16
     self.index = index
@@ -540,14 +633,19 @@ class LinearColor(BaseStruct):
       self.b = stream.readFloat()
       self.a = stream.readFloat()
 
-  def __repr__(self):
-    return "(R: %s, G: %s, B: %s, A: %s)" % (self.r, self.g, self.b, self.a)
+  def _calc_size(self):
+    ws = self._calc_wrapper_size()
+    self.wrapped_size = ws + self.size
+    return self.wrapped_size
 
   def set(self, r=0.0, g=0.0, b=0.0, a=1.0):
     self.r = float(r)
     self.g = float(g)
     self.b = float(b)
     self.a = float(a)
+
+  def __repr__(self):
+    return "(R: %s, G: %s, B: %s, A: %s)" % (self.r, self.g, self.b, self.a)
 
   def _write_to_stream(self, stream):
     self._write_shared_struct_info(stream)
@@ -559,9 +657,8 @@ class LinearColor(BaseStruct):
 
 
 class PrimalPersistentCharacterStatsStruct(BaseStruct):
-  def __init__(self, size=0, stream=None):
+  def __init__(self, stream=None):
     BaseStruct.__init__(self)
-    self.size = size
 
     # Default Values
     levels_string = 'CharacterStatusComponent_ExtraCharacterLevel'
@@ -584,10 +681,10 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
       stream.readNullTerminatedString()
 
   def _write_to_stream(self, stream):
+    self._write_shared_struct_info(stream)
     levels_string = 'CharacterStatusComponent_ExtraCharacterLevel'
     exp_string = 'CharacterStatusComponent_ExperiencePoints'
     level_up_string = 'CharacterStatusComponent_NumberOfLevelUpPointsApplied'
-    self._write_shared_struct_info(stream)
     self.data[levels_string]._write_to_stream(stream)
     self.data[exp_string]._write_to_stream(stream)
     self.data['PlayerState_TotalEngramPoints']._write_to_stream(stream)
