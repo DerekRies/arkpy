@@ -312,13 +312,14 @@ class ObjectProperty(BaseProperty):
     BaseProperty.__init__(self)
     self.index = index
     self.value = value
+    self.quantity = 1
     if stream is not None:
       self.size = stream.readInt32()
       self.index = stream.readInt32()
       # No idea what this is, it's always 01 00 00 00 in the
       # ObjectProperties I've seen. Maybe it's an identifier
       # for the type of data to follow, like 1=String?
-      prefix = stream.readInt32()
+      self.quantity = stream.readInt32()
       self.value = stream.readNullTerminatedString()
 
   def set(self, value):
@@ -563,6 +564,7 @@ class PrimalPlayerDataStruct(BaseStruct):
     self.set(cs, PrimalPlayerCharacterConfigStruct())
     ss = 'MyPersistentCharacterStats'
     self.set(ss, PrimalPersistentCharacterStatsStruct())
+    self.set('TribeID', IntProperty())
     self.set('PlayerDataVersion', IntProperty(value=1))
     self.set('AppIDSet', ArrayProperty(child_type='IntProperty'))
     self.data['AppIDSet'].value.append(IntProperty(value=375350))
@@ -575,6 +577,8 @@ class PrimalPlayerDataStruct(BaseStruct):
   def _exclude(self):
     if self.data['SavedNetworkAddress'].value == '':
       self.data['SavedNetworkAddress'].included = False
+    if self.data['TribeID'].value == 0:
+      self.data['TribeID'].included = False
     self.data['MyPlayerCharacterConfig']._exclude()
     self.data['MyPersistentCharacterStats']._exclude()
 
@@ -591,6 +595,7 @@ class PrimalPlayerDataStruct(BaseStruct):
     self.data['bFirstSpawned']._write_to_stream(stream)
     self.data['MyPlayerCharacterConfig']._write_to_stream(stream)
     self.data['MyPersistentCharacterStats']._write_to_stream(stream)
+    self.data['TribeID']._write_to_stream(stream)
     self.data['PlayerDataVersion']._write_to_stream(stream)
     self.data['AppIDSet']._write_to_stream(stream)
     stream.writeNullTerminatedString('None')

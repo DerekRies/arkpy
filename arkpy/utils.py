@@ -36,3 +36,7 @@ def bits(char, nbits):
 
 def get_file_name(path):
     return os.path.basename(path).split('.')[0]
+
+
+def get_item(blueprint_path):
+    return blueprint_path.split('/')[-1].split('.')[-1]

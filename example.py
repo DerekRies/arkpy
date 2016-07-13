@@ -3,34 +3,46 @@ import random
 from arkpy import arktypes
 from arkpy.ark import ArkCharacterSetting, ArkProfile
 from arkpy.ark import BoneMap, StatMap, BodyColorMap
-
+from arkpy import utils
 
 
 def load_arkprofile():
   # fp = 'data/SavedArksLocal/LocalPlayer.arkprofile'
   # fp = 'data/TheCenterSavedArksLocal/LocalPlayer.arkprofile'
   # fp = 'data/76561197972327357.arkprofile'
-  fp = 'data/LocalPlayerRosetta.arkprofile'
+  # fp = 'data/LocalPlayerRosetta.arkprofile'
   # fp = 'data/LocalProfiles/PlayerLocalData.arkprofile'
   # fp = 'data/1242116633.arktribe'
   # fp = 'data/testoutput.arkprofile'
+  fp = 'data/Servers/Server01/76561198006283537.arkprofile'
   profile = ArkProfile(fp)
   # profile.character.set_name('Hammy')
   # print profile.character.get_name()
   # profile.character.name.set('Hammy')
-  # print profile.character.name
+  print profile.player_name
+  print profile.character.name
+  print profile.character.level_ups.value + 1
+  print 'Tribe: %s' % profile.data['MyData'].data['TribeID'].value
   # print profile.character.body_colors
-  bones = profile.character.bone_modifiers
+  # bones = profile.character.bone_modifiers
 
   # print 'engrams------------------'
-  # print len(profile.character.engrams.value)
+  print 'Engrams: %s' % len(profile.character.engrams.value)
+  # for engram in profile.character.engrams.value:
+    # print engram
   # for engram in profile.character.engrams.value:
     # print engram.value
   # for bone in BoneMap:
   #   print '%s: %s' % (bone.name, bones[bone])
-  # stats = profile.character.stat_points
-  # for stat in StatMap:
-  #   print '%s: %s' % (stat.name, stats[stat])
+  stats = profile.character.stat_points
+  for stat in StatMap:
+    print '%s: %s' % (stat.name, stats[stat])
+
+  slots = profile.character.default_slots
+  for slot in slots:
+    print 'Slot: %s %sx' % (utils.get_item(slot.value), slot.quantity)
+
+
 
 def create_profile():
   profile = ArkProfile()
@@ -65,8 +77,8 @@ def main():
   #   bone_sliders[i] = random.random()
   # character.save_to_file(fp)
 
-  load_arkprofile()
-  # create_profile()
+  # load_arkprofile()
+  create_profile()
 
 if __name__ == '__main__':
   main()

@@ -344,6 +344,10 @@ class ArkProfile:
     return self.myData.data['bFirstSpawned']
 
   @property
+  def tribe_ID(self):
+    return self.myData.data['TribeID']
+
+  @property
   def player_version(self):
     return self.myData.data['PlayerDataVersion']
 
