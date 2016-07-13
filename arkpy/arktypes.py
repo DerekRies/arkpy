@@ -16,15 +16,16 @@ import itertools
 
 from binary import BinaryStream
 
-# debug = True
-debug = False
+debug = True
+# debug = False
 
 
 def load_struct(stream):
   size = stream.readInt32()
   index = stream.readInt32()
   name = stream.readNullTerminatedString()
-  struct = STRUCTS[name](stream=stream)
+  struct = STRUCTS.get(name, BaseStruct)(stream=stream)
+  # struct = STRUCTS[name](stream=stream)
   struct.size = size
   struct.index = index
   return struct
@@ -80,13 +81,18 @@ class BaseProperty():
 
 
 class BaseStruct:
-  def __init__(self):
+  def __init__(self, stream=None):
     self.data = {}
     self.size = 0
     self.wrapped_size = 0
     self.index = 0
     self.var_name = ''
     self.included = True
+
+    if stream is not None:
+      while stream.peek(stream.readNullTerminatedString) != 'None':
+        self.load_and_set_next_property(stream)
+      stream.readNullTerminatedString()
 
   def get(self, key):
     return self.data[key]
@@ -226,6 +232,7 @@ class ArrayProperty(BaseProperty):
           stream.readInt32()
           value = stream.readNullTerminatedString()
         else:
+          # value = conversion_table.get(self.child_type, BaseStruct)
           value = conversion_table[self.child_type]()
         prop = PROPERTIES[self.child_type](value=value)
         self.value.append(prop)
@@ -771,7 +778,7 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
     stream.writeNullTerminatedString('None')
 
 
-# End of ArkProfile Structures ----------------------------
+# ArkTribe Structures
 
 PROPERTIES = {
   'IntProperty': IntProperty,

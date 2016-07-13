@@ -1,7 +1,7 @@
 import random
 
 from arkpy import arktypes
-from arkpy.ark import ArkCharacterSetting, ArkProfile
+from arkpy.ark import ArkCharacterSetting, ArkProfile, ArkTribe
 from arkpy.ark import BoneMap, StatMap, BodyColorMap
 from arkpy import utils
 
@@ -12,7 +12,6 @@ def load_arkprofile():
   # fp = 'data/76561197972327357.arkprofile'
   # fp = 'data/LocalPlayerRosetta.arkprofile'
   # fp = 'data/LocalProfiles/PlayerLocalData.arkprofile'
-  # fp = 'data/1242116633.arktribe'
   # fp = 'data/testoutput.arkprofile'
   fp = 'data/Servers/Server01/76561198006283537.arkprofile'
   profile = ArkProfile(fp)
@@ -57,6 +56,14 @@ def create_profile():
   profile.character.level_ups.set(5)
   profile.save_to_file('data/testoutput.arkprofile')
 
+def load_arktribe():
+  # fp = 'data/1242116633.arktribe'
+  fp = 'data/1082816853.arktribe'
+  tribe = ArkTribe(fp)
+  # print tribe.name
+  # print tribe.map_name
+  # print tribe.map_path
+
 def main():
   # fp = 'data/SavedArksLocal/min.arkcharactersetting'
   # fp = 'data/SavedArksLocal/minandblack.arkcharactersetting'
@@ -78,7 +85,8 @@ def main():
   # character.save_to_file(fp)
 
   # load_arkprofile()
-  create_profile()
+  load_arktribe()
+  # create_profile()
 
 if __name__ == '__main__':
   main()

@@ -16,6 +16,12 @@ class WrongFileType(Exception):
   pass
 
 
+class GameMapMap:
+  the_island = 'TheIsland'
+  the_island_path = '/Game/Maps/TheIslandSubMaps/TheIsland'
+  the_center = 'TheCenter'
+  the_center_path = '/Game/Mods/TheCenter/TheCenter'
+
 class BoneMap(IntEnum):
   Head_Size = 0
   Upper_Face_Size = 15
@@ -373,3 +379,36 @@ class ArkProfile:
       self.myData._write_to_stream(stream)
       stream.writeNullTerminatedString('None')
       stream.writeInt32(0)
+
+
+class ArkTribe:
+  def __init__(self, file_path=None):
+    self.data = {}
+    self.file_type = 'PrimalTribeData'
+    self.name = 'PrimalTribeData_%s' % 0
+    self.game_mode = 'PersistentLevel'
+    self.map_name = 'TheIsland'
+    self.map_path = '/Game/Maps/TheIslandSubMaps/TheIsland'
+    self.version = 1
+
+    if file_path is not None:
+      self._load_from_stream(file_path)
+
+  def _load_from_stream(self, file_path):
+    with open(file_path, 'rb') as ifile:
+      stream = BinaryStream(ifile)
+      stream.readBytes(24)
+      self.file_type = stream.readNullTerminatedString()
+      stream.readBytes(8)
+      self.name = stream.readNullTerminatedString()
+      stream.readNullTerminatedString()
+      self.game_mode = stream.readNullTerminatedString()
+      self.map_name = stream.readNullTerminatedString()
+      self.map_path = stream.readNullTerminatedString()
+      stream.readBytes(20)
+      var_name, var_type = stream.read_pair()
+      print var_name
+      print var_type
+      struct = arktypes.load_struct(stream)
+      struct.var_name = var_name
+      self.data[var_name] = struct
