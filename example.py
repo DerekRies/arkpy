@@ -12,8 +12,8 @@ def load_arkprofile():
   # fp = 'data/76561197972327357.arkprofile'
   # fp = 'data/LocalPlayerRosetta.arkprofile'
   # fp = 'data/LocalProfiles/PlayerLocalData.arkprofile'
-  # fp = 'data/testoutput.arkprofile'
-  fp = 'data/Servers/Server01/76561198006283537.arkprofile'
+  fp = 'data/testoutput.arkprofile'
+  # fp = 'data/Servers/Server01/76561198006283537.arkprofile'
   profile = ArkProfile(fp)
   # profile.character.set_name('Hammy')
   # print profile.character.get_name()
@@ -58,7 +58,9 @@ def create_profile():
 
 def load_arktribe():
   # fp = 'data/1242116633.arktribe'
-  fp = 'data/1082816853.arktribe'
+  fp = 'data/Servers/Server01/1020553874.arktribe'
+  # fp = 'data/Servers/Server01/1060351590.arktribe'
+  # fp = 'data/1082816853.arktribe'
   tribe = ArkTribe(fp)
   # print tribe.name
   # print tribe.map_name
@@ -84,8 +86,8 @@ def main():
   #   bone_sliders[i] = random.random()
   # character.save_to_file(fp)
 
-  # load_arkprofile()
-  load_arktribe()
+  load_arkprofile()
+  # load_arktribe()
   # create_profile()
 
 if __name__ == '__main__':

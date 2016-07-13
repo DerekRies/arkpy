@@ -780,6 +780,48 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
 
 # ArkTribe Structures
 
+class TribeData(BaseStruct):
+  def __init__(self, stream=None):
+    BaseStruct.__init__(self)
+    self.set('TribeName', StrProperty())
+    self.set('OwnerPlayerDataID', UInt32Property())
+    self.set('TribeID', IntProperty())
+    self.set('MembersPlayerName', ArrayProperty(child_type='StrProperty'))
+    self.set('MembersPlayerDataID',ArrayProperty(child_type='UInt32Property'))
+    self.set('bSetGovernment', BoolProperty(value=False))
+    self.set('TribeAdmins', ArrayProperty(child_type='UInt32Property'))
+    # ArrayProperty of TribeAlliance Structs
+    self.set('TribeAlliances', ArrayProperty(child_type='StructProperty'))
+    self.set('TribeGovernment', TribeGovernment())
+    # ArrayProperty of PrimalPlayerCharacterConfigStructs
+    self.set('MembersConfigs', ArrayProperty(child_type='StructProperty'))
+    self.set('TribeLog', ArrayProperty(child_type='StrProperty'))
+
+    if stream is not None:
+      while stream.peek(stream.readNullTerminatedString) != 'None':
+        self.load_and_set_next_property(stream)
+      stream.readNullTerminatedString()
+
+
+class TribeAlliance(BaseStruct):
+  def __init__(self, stream=None):
+    BaseStruct.__init__(self, stream)
+
+
+class TribeGovernment(BaseStruct):
+  def __init__(self, stream=None):
+    BaseStruct.__init__(self)
+    self.set('TribeGovern_PINCode', IntProperty())
+    self.set('TribeGovern_DinoOwnership', IntProperty())
+    self.set('TribeGovern_StructureOwnership', IntProperty())
+    self.set('TribeGovern_DinoUnclaimAdminOnly', IntProperty())
+
+    if stream is not None:
+      while stream.peek(stream.readNullTerminatedString) != 'None':
+        self.load_and_set_next_property(stream)
+      stream.readNullTerminatedString()
+
+
 PROPERTIES = {
   'IntProperty': IntProperty,
   'UIntProperty': UInt32Property,
@@ -801,5 +843,7 @@ STRUCTS = {
   'UniqueNetIdRepl': UniqueNetIdRepl,
   'PrimalPlayerCharacterConfigStruct': PrimalPlayerCharacterConfigStruct,
   'LinearColor': LinearColor,
+  'TribeData': TribeData,
+  'TribeGovernment': TribeGovernment,
   'PrimalPersistentCharacterStatsStruct': PrimalPersistentCharacterStatsStruct
 }
