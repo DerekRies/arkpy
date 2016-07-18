@@ -40,3 +40,12 @@ def get_file_name(path):
 
 def get_item(blueprint_path):
     return blueprint_path.split('/')[-1].split('.')[-1]
+
+
+def list_set(l, index, value):
+    try:
+        l[index] = value
+    except IndexError:
+        for _ in xrange(index - len(l)+1):
+            l.append(None)
+        l[index] = value

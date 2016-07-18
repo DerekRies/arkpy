@@ -106,6 +106,30 @@ class BaseStruct:
     self.data[key] = value
 
   def load_and_set_next_property(self, stream):
+    name, prop_type, value = load_property(stream)
+    value.var_name = name
+    field = self.data.get(name, None)
+    if field is None:
+      self.data[name] = value
+    else:
+      if isinstance(field, list):
+        utils.list_set(field, value.index, value)
+      elif value.index > 0:
+        prev_value = field
+        self.data[name] = []
+        utils.list_set(self.data[name], prev_value.index, prev_value)
+        utils.list_set(self.data[name], value.index, value)
+      else:
+        if field.__class__.__name__ == 'ArrayProperty':
+          print name
+        self.data[name] = value
+    if debug:
+      print '----------------------------------------'
+      print "Struct Type: %s" % self.__class__.__name__
+      print self.data
+      print '----------------------------------------'
+
+  def _load_and_set_next_property(self, stream):
     """
     Reads and automatically sets the next property value to
     the appropriate field on the data dict of this struct. Since
@@ -210,7 +234,10 @@ class ArrayProperty(BaseProperty):
     self.child_type = child_type
     self.length = 0
     if stream is not None:
-      conversion_table = {
+      self._set_from_stream(stream)
+
+  def _set_from_stream(self, stream):
+    conversion_table = {
         'IntProperty': stream.readInt32,
         'UIntProperty': stream.readUInt32,
         'UInt32Property': stream.readUInt32,
@@ -223,11 +250,15 @@ class ArrayProperty(BaseProperty):
         'StrProperty': stream.readNullTerminatedString,
         'ObjectProperty': stream.readNullTerminatedString,
       }
-      self.size = stream.readInt32()
-      self.index = stream.readInt32()
-      self.child_type = stream.readNullTerminatedString()
-      self.length = stream.readInt32()
-      for i in xrange(self.length):
+    self.size = stream.readInt32()
+    self.index = stream.readInt32()
+    self.child_type = stream.readNullTerminatedString()
+    self.length = stream.readInt32()
+    for i in xrange(self.length):
+      if self.child_type == 'StructProperty':
+        value = BaseStruct(stream)
+        self.value.append(value)
+      else:
         if self.child_type == 'ObjectProperty':
           stream.readInt32()
           value = stream.readNullTerminatedString()
@@ -311,7 +342,6 @@ class ByteProperty(BaseProperty):
         self._write_shared_prop_info(stream)
       stream.writeNullTerminatedString('None')
       stream.writeChar(self.value)
-
 
 
 class ObjectProperty(BaseProperty):
@@ -806,6 +836,11 @@ class TribeData(BaseStruct):
 class TribeAlliance(BaseStruct):
   def __init__(self, stream=None):
     BaseStruct.__init__(self, stream)
+    self.set('AllianceName', StrProperty())
+    self.set('AllianceID', UInt32Property())
+    self.set('MembersTribeName', ArrayProperty(child_type='StrPropery'))
+    self.set('MembersTribeID', ArrayProperty(child_type='UInt32Property'))
+    self.set('AdminsTribeID', ArrayProperty(child_type='UInt32Property'))
 
 
 class TribeGovernment(BaseStruct):
