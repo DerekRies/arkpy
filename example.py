@@ -64,9 +64,11 @@ def load_arktribe():
   fp = 'data/Servers/Server01/1058612644.arktribe'
   # fp = 'data/1082816853.arktribe'
   tribe = ArkTribe(fp)
-  # print tribe.name
-  # print tribe.map_name
-  # print tribe.map_path
+  # tribe = ArkTribe()
+  print tribe.name
+  for entry in tribe.log.value:
+    print entry
+
 
 def main():
   # fp = 'data/SavedArksLocal/min.arkcharactersetting'

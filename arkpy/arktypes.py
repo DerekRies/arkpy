@@ -106,6 +106,12 @@ class BaseStruct:
     self.data[key] = value
 
   def load_and_set_next_property(self, stream):
+    """
+    Reads and automatically sets the next property value to
+    the appropriate field on the data dict of this struct. Since
+    some fields in Ark File formats use the same name, but are not
+    an array, their differentiator is a little Int32 index field.
+    """
     name, prop_type, value = load_property(stream)
     value.var_name = name
     field = self.data.get(name, None)
@@ -121,33 +127,10 @@ class BaseStruct:
         utils.list_set(self.data[name], value.index, value)
       else:
         if field.__class__.__name__ == 'ArrayProperty':
+          # TODO: Would like to merge arrays of structs with default values
+          # so that the proper structs will be used
           print name
         self.data[name] = value
-    if debug:
-      print '----------------------------------------'
-      print "Struct Type: %s" % self.__class__.__name__
-      print self.data
-      print '----------------------------------------'
-
-  def _load_and_set_next_property(self, stream):
-    """
-    Reads and automatically sets the next property value to
-    the appropriate field on the data dict of this struct. Since
-    some fields in Ark File formats use the same name, but are not
-    an array, their differentiator is a little Int32 index field.
-    """
-    name, prop_type, value = load_property(stream)
-    value.var_name = name
-    if self.data.get(name, None) is not None:
-      if isinstance(self.data.get(name, None), list):
-        if len(self.data[name]) == 0:
-          self.data[name].append(value)
-        else:
-          self.data[name][value.index] = value
-      else:
-        self.data[name] = value
-    else:
-      self.data[name] = value
     if debug:
       print '----------------------------------------'
       print "Struct Type: %s" % self.__class__.__name__

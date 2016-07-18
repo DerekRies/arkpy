@@ -385,14 +385,14 @@ class ArkTribe:
   def __init__(self, file_path=None):
     self.data = {}
     self.file_type = 'PrimalTribeData'
-    self.name = 'PrimalTribeData_%s' % 0
+    self.number = 0
     self.game_mode = 'PersistentLevel'
     self.map_name = 'TheIsland'
     self.map_path = '/Game/Maps/TheIslandSubMaps/TheIsland'
     self.version = 1
-
     if file_path is not None:
       self._load_from_stream(file_path)
+    self.container = self.data.get('TribeData', arktypes.TribeData())
 
   def _load_from_stream(self, file_path):
     with open(file_path, 'rb') as ifile:
@@ -400,7 +400,8 @@ class ArkTribe:
       stream.readBytes(24)
       self.file_type = stream.readNullTerminatedString()
       stream.readBytes(8)
-      self.name = stream.readNullTerminatedString()
+      self.number = stream.readNullTerminatedString().split('_')[1]
+      self.number = int(self.number)
       stream.readNullTerminatedString()
       self.game_mode = stream.readNullTerminatedString()
       self.map_name = stream.readNullTerminatedString()
@@ -412,3 +413,47 @@ class ArkTribe:
       struct = arktypes.load_struct(stream)
       struct.var_name = var_name
       self.data[var_name] = struct
+
+  @property
+  def name(self):
+    return self.container.data['TribeName']
+
+  @property
+  def owner_id(self):
+    return self.container.data['OwnerPlayerDataID']
+
+  @property
+  def tribe_id(self):
+    return self.container.data['TribeID']
+
+  @property
+  def members_names(self):
+    return self.container.data['MembersPlayerName']
+
+  @property
+  def members_ids(self):
+    return self.container.data['MembersPlayerDataID']
+
+  @property
+  def government_set(self):
+    return self.container.data['bSetGovernment']
+
+  @property
+  def tribe_admins(self):
+    return self.container.data['TribeAdmins']
+
+  @property
+  def alliances(self):
+    return self.container.data['TribeAlliances']
+
+  @property
+  def government(self):
+    return self.container.data['TribeGovernment']
+
+  @property
+  def member_configs(self):
+    return self.container.data['MemberConfigs']
+
+  @property
+  def log(self):
+    return self.container.data['TribeLog']
