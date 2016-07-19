@@ -180,6 +180,25 @@ class BaseStruct:
     stream.writeInt32(self.index)
     stream.writeNullTerminatedString(self.__class__.__name__)
 
+  def _write_to_stream(self, stream, array=False):
+    if self.included:
+      self._calc_size()
+      if array == False:
+        self._write_shared_struct_info(stream)
+      # for each field in the data dict, write it
+      for key, value in self.data.iteritems():
+        if isinstance(value, list):
+          for v in value:
+            if v is not None:
+              v._write_to_stream(stream)
+        else:
+          value._write_to_stream(stream)
+      stream.writeNullTerminatedString('None')
+
+  def _exclude(self):
+    pass
+
+
 
 class StrProperty(BaseProperty):
   def __init__(self, value='', stream=None):
@@ -809,11 +828,37 @@ class TribeData(BaseStruct):
     # ArrayProperty of PrimalPlayerCharacterConfigStructs
     self.set('MembersConfigs', ArrayProperty(child_type='StructProperty'))
     self.set('TribeLog', ArrayProperty(child_type='StrProperty'))
+    self.set('LogIndex', IntProperty())
 
     if stream is not None:
       while stream.peek(stream.readNullTerminatedString) != 'None':
         self.load_and_set_next_property(stream)
       stream.readNullTerminatedString()
+
+  def _exclude(self):
+    self.data['TribeGovernment']._exclude()
+    zero_log_index = self.data['LogIndex'].value == 0
+    empty_log = len(self.data['TribeLog'].value) == 0
+    if zero_log_index or empty_log:
+      self.data['LogIndex'].included = False
+
+  def _write_to_stream(self, stream):
+    self._exclude()
+    self._calc_size()
+    self._write_shared_struct_info(stream)
+    self.data['TribeName']._write_to_stream(stream)
+    self.data['OwnerPlayerDataID']._write_to_stream(stream)
+    self.data['TribeID']._write_to_stream(stream)
+    self.data['MembersPlayerName']._write_to_stream(stream)
+    self.data['MembersPlayerDataID']._write_to_stream(stream)
+    self.data['bSetGovernment']._write_to_stream(stream)
+    self.data['TribeAdmins']._write_to_stream(stream)
+    self.data['TribeAlliances']._write_to_stream(stream)
+    self.data['TribeGovernment']._write_to_stream(stream)
+    self.data['MembersConfigs']._write_to_stream(stream)
+    self.data['TribeLog']._write_to_stream(stream)
+    self.data['LogIndex']._write_to_stream(stream)
+    stream.writeNullTerminatedString('None')
 
 
 class TribeAlliance(BaseStruct):
@@ -838,6 +883,14 @@ class TribeGovernment(BaseStruct):
       while stream.peek(stream.readNullTerminatedString) != 'None':
         self.load_and_set_next_property(stream)
       stream.readNullTerminatedString()
+
+  def _exclude(self):
+    self.included = False
+    for key, v in self.data.iteritems():
+      if v.value == 0:
+        v.included = False
+      else:
+        self.included = True
 
 
 PROPERTIES = {

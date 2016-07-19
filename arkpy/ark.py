@@ -414,6 +414,32 @@ class ArkTribe:
       struct.var_name = var_name
       self.data[var_name] = struct
 
+  def _write_header_to_stream(self, stream):
+    stream.writeInt32(1)
+    stream.writeInt32(1)
+    stream.writeBytesWith(16, 0)
+    stream.writeNullTerminatedString(self.file_type)
+    stream.writeInt32(0)
+    stream.writeInt32(5)
+    data_number_str = '%s_%s' % (self.file_type, self.number)
+    stream.writeNullTerminatedString(data_number_str)
+    stream.writeNullTerminatedString('ArkGameMode')
+    stream.writeNullTerminatedString(self.game_mode)
+    stream.writeNullTerminatedString(self.map_name)
+    stream.writeNullTerminatedString(self.map_path)
+    stream.writeBytesWith(12, 0)
+    header_size = stream.tell() + 8
+    stream.writeInt32(header_size)
+    stream.writeInt32(0)
+
+  def save_to_file(self, file_path):
+    with open(file_path, 'wb') as ofile:
+      stream = BinaryStream(ofile)
+      self._write_header_to_stream(stream)
+      self.container._write_to_stream(stream)
+      stream.writeNullTerminatedString('None')
+      stream.writeInt32(0)
+
   @property
   def name(self):
     return self.container.data['TribeName']
@@ -433,6 +459,10 @@ class ArkTribe:
   @property
   def members_ids(self):
     return self.container.data['MembersPlayerDataID']
+
+  @property
+  def members(self):
+    return zip(self.members_names.value, self.members_ids.value)
 
   @property
   def government_set(self):
@@ -457,3 +487,4 @@ class ArkTribe:
   @property
   def log(self):
     return self.container.data['TribeLog']
+
