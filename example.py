@@ -60,7 +60,7 @@ def load_arktribe():
   # fp = 'data/1242116633.arktribe'
   # fp = 'data/Servers/Server01/1020553874.arktribe'
   # fp = 'data/Servers/Server01/1060351590.arktribe'
-  # fp = 'data/Servers/Server01/1040644402.arktribe'
+  # fp = 'data/Servers/Server01/1579155423.arktribe'
   fp = 'data/Servers/Server01/1058612644.arktribe'
   # fp = 'data/1082816853.arktribe'
   tribe = ArkTribe(fp)
@@ -70,7 +70,18 @@ def load_arktribe():
   print 'Tribe Name: %s' % tribe.name.value
   # for entry in tribe.log.value:
     # print entry
-
+  print 'Members'
+  admin_ids = [n.value for n in tribe.tribe_admins.value]
+  for name, mid in tribe.members:
+    isadmin = bool(mid.value in admin_ids)
+    vals = (name.value, mid.value)
+    if mid.value == tribe.owner_id.value:
+      print ' [OWNER] Name: %s, ID: %s' % vals
+    elif isadmin:
+      print ' [ADMIN] Name: %s, ID: %s' % vals
+    else:
+      print ' [MEMBER] Name: %s, ID: %s' % vals
+  print '-------------------------------------'
   print 'Alliances'
   alliances = tribe.alliances
   if alliances is not None:
@@ -79,6 +90,7 @@ def load_arktribe():
       for t in alliance.data['MembersTribeName'].value:
         print '    Tribe Name: %s' % t.value
       print '-------------------------------------'
+
 
 
 def create_tribe():
@@ -114,19 +126,12 @@ def read_and_write_tribe():
   fp = 'data/Servers/Server01/1058612644.arktribe'
   tribe = ArkTribe(fp)
   tribe.save_to_file('data/1058612644-resave.arktribe')
+  retribe = ArkTribe('data/1058612644-resave.arktribe')
+  print retribe.container.data
+
 
 
 def main():
-  # fp = 'data/SavedArksLocal/min.arkcharactersetting'
-  # fp = 'data/SavedArksLocal/minandblack.arkcharactersetting'
-  # fp = 'data/SavedArksLocal/maxandbrown.arkcharactersetting'
-  # fp = 'data/SavedArksLocal/mini.arkcharactersetting'
-  # fp = 'data/SavedArksLocal/defaultmale.arkcharactersetting'
-  # fp = 'data/throwaway.arkcharactersetting'
-  # fp = 'data/random.arkcharactersetting'
-  # character = ArkCharacterSetting.from_file(fp)
-  # print character.character_setting
-
   # character = ArkCharacterSetting()
   # character.character_setting['BodyColorSliderValue'] = random.random()
   # character.character_setting['EyeColorSliderValue'] = random.random()
@@ -137,10 +142,10 @@ def main():
   # character.save_to_file(fp)
 
   # load_arkprofile()
-  # load_arktribe()
+  load_arktribe()
   # create_profile()
   # create_tribe()
-  read_and_write_tribe()
+  # read_and_write_tribe()
 
 if __name__ == '__main__':
   main()
