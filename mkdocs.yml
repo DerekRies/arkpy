@@ -6,6 +6,8 @@ extra_css:
 pages:
  - Home: 'index.md'
  - User Guide: 'userguide.md'
- - API Documentation: 'apidocs.md'
+ - API Documentation:
+    - arktypes module: 'arktypesmodule.md'
+    - ark module: 'arkmodule.md'
  - File Format Specs: 'formats.md'
  - Contributors Guide: 'contribs.md'
