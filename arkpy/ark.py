@@ -488,3 +488,7 @@ class ArkTribe:
   def log(self):
     return self.container.data['TribeLog']
 
+  @property
+  def log_index(self):
+    return self.container.data['LogIndex']
+
