@@ -7,6 +7,10 @@ ARKpy is a library for reading and writing the file formats of ARK: Survival Evo
 
 For those interested in the reverse engineering of the file types the specifications can be found among the library docs.
 
+[Docs](http://arkpy.readthedocs.io/en/latest/) **|**
+[File Format Specs](http://arkpy.readthedocs.io/en/latest/formats/)
+
+
 ## Features
  - Read and Write the following file types
     - **.arkcharactersetting** (Character creator preset files)
@@ -51,6 +55,3 @@ for bone in BoneMap:
 
 ## Installation
 Soon to be hosted on Pypi.
-
-## Docs
-Coming soon.
