@@ -431,7 +431,7 @@ Is a smaller struct like LinearColor<StructProperty> in that it doesnt have a se
 | Property Type | NTString | no |
 | Size of Value | Integer (32 Bits)                  | no |
 | Index         | Integer (32 Bits)                  | no |
-| 'UniqueNetIDReply' | NTString | no |
+| 'UniqueNetIDRepl' | NTString | no |
 | Unknown         | Integer (32 Bits)         | no |
 | Value         | NTString (steam id) | no |
 
