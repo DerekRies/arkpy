@@ -4,10 +4,6 @@ from context import arktypes, ark, binary
 data_dir = '../data/'
 output_dir = 'tests/output/'
 
-# @pytest.fixture(scope='session', autouse=True)
-# def setup_tmpdir():
-#   # If .tmp exists, delete it
-#   # Create .tmp
 
 def write_and_read(file_name, prop):
   file = output_dir + file_name

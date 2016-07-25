@@ -12,6 +12,17 @@ from binary import BinaryStream
 from enum import IntEnum
 
 
+def _gen_player_id():
+  # Returns a 9 digit ID as an int
+  return random.randint(100000000, 999999999)
+
+def _gen_tribe_id():
+  # Returns a 10 digit ID as an int
+  # Largest 10 digit number that fits into a 32bit UInt
+  return random.randint(1000000000, 2147483647)
+
+
+
 class WrongFileType(Exception):
   pass
 
