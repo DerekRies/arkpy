@@ -9,6 +9,19 @@ output_dir = 'tests/output/'
 #   # If .tmp exists, delete it
 #   # Create .tmp
 
+def write_and_read(file_name, prop):
+  file = output_dir + file_name
+  with open(file, 'wb') as ofile:
+    ostream = binary.BinaryStream(ofile)
+    prop._write_to_stream(ostream)
+  with open(file, 'rb') as ifile:
+    istream = binary.BinaryStream(ifile)
+    name, prop_type = istream.read_pair()
+    prop2 = prop.__class__(stream=istream)
+    prop2.var_name = name
+    return prop2
+
+
 
 class TestStrProperty:
   def test_init(self):
@@ -37,18 +50,189 @@ class TestStrProperty:
     assert size == thesize
 
   def test_write_read(self):
-    file = output_dir + 'strproperty.output'
     val = 'Woobles'
     prop = arktypes.StrProperty(val)
     prop.var_name = 'CharacterName'
     prop._calc_inner_size()
-    with open(file, 'wb') as ofile:
-      ostream = binary.BinaryStream(ofile)
-      prop._write_to_stream(ostream)
-    with open(file, 'rb') as ifile:
-      istream = binary.BinaryStream(ifile)
-      name, prop_type = istream.read_pair()
-      secondProp = arktypes.StrProperty(stream=istream)
-      secondProp.var_name = name
-      assert secondProp.value == prop.value
+    prop2 = write_and_read('strproperty.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
 
+
+class TestArrayProperty:
+  def test_init(self):
+    prop = arktypes.ArrayProperty()
+    assert len(prop.value) == 0
+
+  def test_write_read(self):
+    prop = arktypes.ArrayProperty()
+    prop2 = arktypes.IntProperty(value=2)
+    prop2.var_name = 'Test'
+    prop.var_name = 'TestArray'
+    prop.value.append(prop2)
+    prop._calc_size()
+    prop3 = write_and_read('arrayproperty.output', prop)
+    assert prop3.length == len(prop.value)
+    assert prop3.value[0].value == prop2.value
+
+
+class TestByteProperty:
+  def test_init(self):
+    prop = arktypes.ByteProperty(value=10)
+    assert prop.value == 10
+
+  def test_write_read(self):
+    prop = arktypes.ByteProperty(value=3)
+    prop.var_name = 'NumberOfLevelUpPointsApplied'
+    prop2 = write_and_read('byteproperty.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
+
+
+class TestObjectProperty:
+  def test_init(self):
+    prop = arktypes.ObjectProperty(value='campfire')
+    assert prop.value == 'campfire'
+
+  def test_write_read(self):
+    prop = arktypes.ObjectProperty(value='campfire')
+    prop.var_name = 'DefaultItemSlot'
+    prop._calc_size()
+    prop2 = write_and_read('objectproperty.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop2.var_name
+
+
+class TestFloatProperty:
+  def test_init(self):
+    prop = arktypes.FloatProperty(value=3)
+    assert prop.value == 3.0
+    assert isinstance(prop.value, float) == True
+
+  def test_write_read(self):
+    prop = arktypes.FloatProperty(value=0.75)
+    prop.var_name = 'AFloatValue'
+    prop._calc_size()
+    prop2 = write_and_read('floatproperty.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
+
+
+class TestDoubleProperty:
+  def test_init(self):
+    prop = arktypes.DoubleProperty(value=3)
+    assert prop.value == 3.0
+    assert isinstance(prop.value, float) == True
+
+  def test_write_read(self):
+    prop = arktypes.DoubleProperty(value=0.75)
+    prop.var_name = 'ADoubleValue'
+    prop._calc_size()
+    prop2 = write_and_read('doubleproperty.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
+
+
+class TestInt16Property:
+  def test_init(self):
+    prop = arktypes.Int16Property(value=3.0)
+    assert prop.value == 3
+    assert isinstance(prop.value, int) == True
+
+  def test_write_read(self):
+    prop = arktypes.Int16Property(value=5)
+    prop.var_name = 'AnInt16Value'
+    prop._calc_size()
+    prop2 = write_and_read('int16property.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
+
+
+class TestUInt16Property:
+  def test_init(self):
+    prop = arktypes.UInt16Property(value=3.0)
+    assert prop.value == 3
+    assert isinstance(prop.value, int) == True
+
+  def test_write_read(self):
+    prop = arktypes.UInt16Property(value=5)
+    prop.var_name = 'AnUInt16Value'
+    prop._calc_size()
+    prop2 = write_and_read('uint16property.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
+
+
+class TestIntProperty:
+  def test_init(self):
+    prop = arktypes.IntProperty(value=3.0)
+    assert prop.value == 3
+    assert isinstance(prop.value, int) == True
+
+  def test_write_read(self):
+    prop = arktypes.IntProperty(value=5)
+    prop.var_name = 'AnIntValue'
+    prop._calc_size()
+    prop2 = write_and_read('intproperty.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
+
+
+class TestUInt32Property:
+  def test_init(self):
+    prop = arktypes.UInt32Property(value=3.0)
+    assert prop.value == 3
+    assert isinstance(prop.value, int) == True
+
+  def test_write_read(self):
+    prop = arktypes.UInt32Property(value=5)
+    prop.var_name = 'AUInt32Value'
+    prop._calc_size()
+    prop2 = write_and_read('uint32property.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
+
+
+class TestInt64Property:
+  def test_init(self):
+    prop = arktypes.Int64Property(value=3.0)
+    assert prop.value == 3
+    assert isinstance(prop.value, int) == True
+
+  def test_write_read(self):
+    prop = arktypes.Int64Property(value=5)
+    prop.var_name = 'AnInt64Value'
+    prop._calc_size()
+    prop2 = write_and_read('int64property.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
+
+
+class TestUInt64Property:
+  def test_init(self):
+    prop = arktypes.UInt64Property(value=3.0)
+    assert prop.value == 3
+    assert isinstance(prop.value, int) == True
+
+  def test_write_read(self):
+    prop = arktypes.UInt64Property(value=5)
+    prop.var_name = 'AUInt64Value'
+    prop._calc_size()
+    prop2 = write_and_read('uint64property.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name
+
+
+class TestBoolProperty:
+  def test_init(self):
+    prop = arktypes.BoolProperty(value=False)
+    assert prop.value == False
+    assert isinstance(prop.value, bool) == True
+
+  def test_write_read(self):
+    prop = arktypes.BoolProperty(value=True)
+    prop.var_name = 'SomeBooleanValue'
+    prop._calc_size()
+    prop2 = write_and_read('boolproperty.output', prop)
+    assert prop2.value == prop.value
+    assert prop2.var_name == prop.var_name

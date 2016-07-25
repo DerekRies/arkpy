@@ -392,7 +392,7 @@ class ObjectProperty(BaseProperty):
 class FloatProperty(BaseProperty):
   def __init__(self, value=0.0, stream=None, index=0):
     BaseProperty.__init__(self)
-    self.value = value
+    self.set(value=value)
     self.size = 4
     self.index = index
     if stream is not None:
@@ -413,7 +413,7 @@ class FloatProperty(BaseProperty):
 class DoubleProperty(BaseProperty):
   def __init__(self, value=0.0, stream=None):
     BaseProperty.__init__(self)
-    self.value = value
+    self.set(value=value)
     self.size = 8
     if stream is not None:
       self.size = stream.readInt32()
@@ -433,7 +433,7 @@ class DoubleProperty(BaseProperty):
 class Int16Property(BaseProperty):
   def __init__(self, value=0, stream=None):
     BaseProperty.__init__(self)
-    self.value = value
+    self.set(value=value)
     self.size = 2
     if stream is not None:
       self.size = stream.readInt32()
@@ -453,7 +453,7 @@ class Int16Property(BaseProperty):
 class UInt16Property(BaseProperty):
   def __init__(self, value=0, stream=None):
     BaseProperty.__init__(self)
-    self.value = value
+    self.set(value=value)
     self.size = 2
     if stream is not None:
       self.size = stream.readInt32()
@@ -473,7 +473,7 @@ class UInt16Property(BaseProperty):
 class IntProperty(BaseProperty):
   def __init__(self, value=0, stream=None):
     BaseProperty.__init__(self)
-    self.value = value
+    self.set(value=value)
     self.size = 4
     if stream is not None:
       self.size = stream.readInt32()
@@ -493,7 +493,7 @@ class IntProperty(BaseProperty):
 class UInt32Property(BaseProperty):
   def __init__(self, value=0, stream=None):
     BaseProperty.__init__(self)
-    self.value = value
+    self.set(value=value)
     self.size = 4
     if stream is not None:
       self.size = stream.readInt32()
@@ -513,7 +513,7 @@ class UInt32Property(BaseProperty):
 class Int64Property(BaseProperty):
   def __init__(self, value=0, stream=None):
     BaseProperty.__init__(self)
-    self.value = value
+    self.set(value=value)
     self.size = 8
     if stream is not None:
       self.size = stream.readInt32()
@@ -533,7 +533,7 @@ class Int64Property(BaseProperty):
 class UInt64Property(BaseProperty):
   def __init__(self, value=0, stream=None):
     BaseProperty.__init__(self, value=value)
-    self.value = value
+    self.set(value=value)
     self.size = 8
     if stream is not None:
       self.size = stream.readInt32()
