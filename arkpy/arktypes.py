@@ -815,6 +815,8 @@ class PrimalPersistentCharacterStatsStruct(BaseStruct):
 class TribeData(BaseStruct):
   def __init__(self, stream=None):
     BaseStruct.__init__(self)
+    self.var_name = 'TribeData'
+
     self.set('TribeName', StrProperty())
     self.set('OwnerPlayerDataID', UInt32Property())
     self.set('TribeID', IntProperty())
