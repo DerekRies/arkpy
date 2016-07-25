@@ -2,6 +2,12 @@ from context import arktypes, ark, binary
 
 
 data_dir = '../data/'
+output_dir = 'tests/output/'
+
+# @pytest.fixture(scope='session', autouse=True)
+# def setup_tmpdir():
+#   # If .tmp exists, delete it
+#   # Create .tmp
 
 
 class TestStrProperty:
@@ -30,9 +36,19 @@ class TestStrProperty:
     thesize = thesize + 8
     assert size == thesize
 
-  # def test_write_and_read(self):
-    # val = 'Woobles'
-    # prop = arktypes.StrProperty(val)
-    # prop.var_name = 'CharacterName'
-    # prop._write_to_stream(ostream)
-    # with open()
+  def test_write_read(self):
+    file = output_dir + 'strproperty.output'
+    val = 'Woobles'
+    prop = arktypes.StrProperty(val)
+    prop.var_name = 'CharacterName'
+    prop._calc_inner_size()
+    with open(file, 'wb') as ofile:
+      ostream = binary.BinaryStream(ofile)
+      prop._write_to_stream(ostream)
+    with open(file, 'rb') as ifile:
+      istream = binary.BinaryStream(ifile)
+      name, prop_type = istream.read_pair()
+      secondProp = arktypes.StrProperty(stream=istream)
+      secondProp.var_name = name
+      assert secondProp.value == prop.value
+
