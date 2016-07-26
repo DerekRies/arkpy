@@ -308,7 +308,9 @@ class ArkProfile:
           self.game_mode = stream.readNullTerminatedString()
           self.map_name = stream.readNullTerminatedString()
           self.map_path = stream.readNullTerminatedString()
-          stream.readBytes(20)
+          stream.readBytes(12)
+          self.header_size = stream.readInt32()
+          stream.readInt32()
           # End of Header ----------------------------
           # print '----------------------------------'
           var_name, var_type = stream.read_pair()
@@ -370,7 +372,10 @@ class ArkProfile:
     stream.writeNullTerminatedString(self.game_mode)
     stream.writeNullTerminatedString(self.map_name)
     stream.writeNullTerminatedString(self.map_path)
-    stream.writeBytesWith(20, 0)
+    stream.writeBytesWith(12, 0)
+    self.header_size = stream.tell() + 8
+    stream.writeInt32(self.header_size)
+    stream.writeInt32(0)
 
   def save_to_file(self, file_path):
     with open(file_path, 'wb') as ofile:

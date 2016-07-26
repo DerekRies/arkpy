@@ -34,6 +34,8 @@ class TestArkProfile:
     assert profile2.player_id.value == profile.player_id.value
     assert profile2.character.isFemale.value == profile.character.isFemale.value
     assert profile2.character.stat_points[ark.StatMap.Health].value == 9
+    assert profile2.header_size != 0
+    assert profile2.header_size == profile.header_size
 
 
 class TestArkTribe:

@@ -44,6 +44,7 @@ def get_item(blueprint_path):
 
 
 def list_set(l, index, value):
+    value.changed = True
     try:
         l[index] = value
     except IndexError:

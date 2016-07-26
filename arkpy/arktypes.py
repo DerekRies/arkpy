@@ -49,6 +49,7 @@ class BaseProperty():
     self.wrapped_size = 0
     self.var_name = ''
     self.included = True
+    self.changed = False
 
   def set(self, value):
     self.value = value
@@ -653,8 +654,8 @@ class PrimalPlayerDataStruct(BaseStruct):
     self.data['MyPlayerCharacterConfig']._write_to_stream(stream)
     self.data['MyPersistentCharacterStats']._write_to_stream(stream)
     self.data['TribeID']._write_to_stream(stream)
-    self.data['PlayerDataVersion']._write_to_stream(stream)
     self.data['AppIDSet']._write_to_stream(stream)
+    self.data['PlayerDataVersion']._write_to_stream(stream)
     stream.writeNullTerminatedString('None')
 
 
@@ -696,11 +697,11 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
     colors = [LinearColor(index=i) for i in xrange(3)]
     self.set('BodyColors', colors)
     # self.set('BodyColors', [])
+    self.set('PlayerCharacterName', StrProperty())
     bones = [FloatProperty(value=0.5, index=j) for j in xrange(22)]
     self.set('RawBoneModifiers', bones)
     # self.set('RawBoneModifiers', [])
     self.set('bIsFemale', BoolProperty(value=False))
-    self.set('PlayerCharacterName', StrProperty())
     self.set('PlayerSpawnRegionIndex', IntProperty())
 
     if stream is not None:
@@ -713,17 +714,17 @@ class PrimalPlayerCharacterConfigStruct(BaseStruct):
   def _exclude(self):
     # colors
     for bone in self.data['RawBoneModifiers']:
-      if bone.value == 0.5:
+      if bone.value == 0.5 and not bone.changed:
         bone.included = False
 
   def _write_to_stream(self, stream):
     self._write_shared_struct_info(stream)
     for color in self.data['BodyColors']:
       color._write_to_stream(stream)
+    self.data['PlayerCharacterName']._write_to_stream(stream)
     for bone in self.data['RawBoneModifiers']:
       bone._write_to_stream(stream)
     self.data['bIsFemale']._write_to_stream(stream)
-    self.data['PlayerCharacterName']._write_to_stream(stream)
     self.data['PlayerSpawnRegionIndex']._write_to_stream(stream)
     stream.writeNullTerminatedString('None')
 
