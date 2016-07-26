@@ -16,8 +16,8 @@ import itertools
 
 from binary import BinaryStream
 
-debug = True
-# debug = False
+# debug = True
+debug = False
 
 
 def load_struct(stream):
@@ -129,7 +129,8 @@ class BaseStruct:
         if field.__class__.__name__ == 'ArrayProperty':
           # TODO: Would like to merge arrays of structs with default values
           # so that the proper structs will be used
-          print name
+          # print name
+          pass
         self.data[name] = value
     if debug:
       print '----------------------------------------'

@@ -1,4 +1,6 @@
+import pytest
 import random
+import os
 
 from context import arktypes, ark, binary
 
@@ -34,7 +36,6 @@ class TestArkProfile:
     assert profile2.character.stat_points[ark.StatMap.Health].value == 9
 
 
-
 class TestArkTribe:
   def test_write_read(self):
     owner_id = ark._gen_player_id()
@@ -55,3 +56,17 @@ class TestArkTribe:
     assert tribe2.owner_id.value == tribe.owner_id.value
 
 
+@pytest.mark.slow
+class TestBulkReads:
+  def test_read_profiles(self):
+    path = 'data/Servers/Server01/'
+    files = os.listdir(path)
+    for file in files:
+      if '.arkprofile' in file:
+        try:
+          file_path = path + file
+          profile = ark.ArkProfile(file_path)
+        except:
+          print 'FAILED: %s' % file
+  def test_read_tribes(self):
+    assert True
