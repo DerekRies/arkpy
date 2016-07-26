@@ -1,3 +1,5 @@
+import pytest
+
 from context import arktypes, ark, binary
 
 

@@ -13,6 +13,7 @@ import random
 import utils
 import json
 import itertools
+import struct
 
 from binary import BinaryStream
 
@@ -204,12 +205,24 @@ class BaseStruct:
 class StrProperty(BaseProperty):
   def __init__(self, value='', stream=None):
     BaseProperty.__init__(self)
-    self.value = str(value)
+    self.set(value=value)
     self.size = 5 + len(value)
+    self._is_unicode = False
     if stream is not None:
       self.size = stream.readInt32()
       self.index = stream.readInt32()
-      self.value = stream.readNullTerminatedString()
+      pos = stream.tell()
+      try:
+        self.value = stream.readNullTerminatedString()
+      except struct.error:
+        # TODO: Correctly parse Unicode string.
+        self._is_unicode = True
+        stream.base_stream.seek(pos, 0)
+        unicode_str = stream.readBytes(self.size)
+        self.value = unicode_str
+        # self.value = unicode(unicode_str, encoding='utf_16_le')
+        # print self.value
+
 
   def set(self, value):
     self.value = str(value)
@@ -223,7 +236,10 @@ class StrProperty(BaseProperty):
     if self.included:
       if array == False:
         self._write_shared_prop_info(stream)
-      stream.writeNullTerminatedString(self.value)
+      if self._is_unicode:
+        stream.writeBytes(self.value)
+      else:
+        stream.writeNullTerminatedString(self.value)
 
 
 class ArrayProperty(BaseProperty):

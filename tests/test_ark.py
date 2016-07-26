@@ -68,5 +68,6 @@ class TestBulkReads:
           profile = ark.ArkProfile(file_path)
         except:
           print 'FAILED: %s' % file
+          assert False
   def test_read_tribes(self):
     assert True
