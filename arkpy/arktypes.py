@@ -611,7 +611,8 @@ class PrimalPlayerDataStruct(BaseStruct):
     self.var_name = 'MyData'
 
     # Default Values
-    self.set('PlayerDataID', UInt64Property(value=0))
+    random_id = utils._gen_player_id()
+    self.set('PlayerDataID', UInt64Property(value=random_id))
     self.set('UniqueID', UniqueNetIdRepl())
     self.set('SavedNetworkAddress', StrProperty())
     self.set('PlayerName', StrProperty())

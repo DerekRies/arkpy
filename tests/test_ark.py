@@ -2,7 +2,7 @@ import pytest
 import random
 import os
 
-from context import arktypes, ark, binary
+from context import arktypes, ark, binary, utils
 
 
 data_dir = 'data/'
@@ -16,7 +16,7 @@ class TestArkProfile:
     profile.map_path = ark.GameMapMap.the_center_path
     profile.unique_id.set('11111111111111111')
     profile.player_name.set('Fake Steam Name')
-    profile.player_id.set(ark._gen_player_id())
+    profile.player_id.set(utils._gen_player_id())
     profile.first_spawned.set(True)
     profile.character.name.set('GeneratedCharacter')
     profile.character.level_ups.set(9)
@@ -38,11 +38,11 @@ class TestArkProfile:
 
 class TestArkTribe:
   def test_write_read(self):
-    owner_id = ark._gen_player_id()
+    owner_id = utils._gen_player_id()
     owner_name = arktypes.StrProperty(value='Generated Owner')
     tribe = ark.ArkTribe()
     tribe.name.set('Generated Tribe')
-    tribe.tribe_id.set(ark._gen_tribe_id())
+    tribe.tribe_id.set(utils._gen_tribe_id())
     tribe.owner_id.set(owner_id)
     tribe.members_names.value.append(owner_name)
     member_id = arktypes.UInt32Property(value=owner_id)
