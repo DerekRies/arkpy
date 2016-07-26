@@ -48,4 +48,10 @@ class TestArkTribe:
     tribe.members_ids.value.append(member_id)
     tribe.save_to_file(output_dir + 'generatedtribe.arktribe')
 
+    tribe2 = ark.ArkTribe(output_dir + 'generatedtribe.arktribe')
+    assert tribe2.name.value == tribe.name.value
+    assert tribe2.tribe_id.value == tribe.tribe_id.value
+    assert tribe2.members_names.value[0].value == tribe.members_names.value[0].value
+    assert tribe2.owner_id.value == tribe.owner_id.value
+
 
