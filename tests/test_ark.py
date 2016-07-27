@@ -108,5 +108,7 @@ class TestStyle:
         result = pep8style.check_files([
           'tests/test_ark.py',
           'tests/test_arktypes.py',
+          'arkpy/binary.py',
+          'arkpy/utils.py',
           ])
         assert result.total_errors == 0

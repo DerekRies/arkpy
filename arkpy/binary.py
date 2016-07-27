@@ -74,9 +74,9 @@ class BinaryStream:
         return unicode_str
 
     def read_pair(self):
-      name = self.readNullTerminatedString()
-      typeof = self.readNullTerminatedString()
-      return (name, typeof)
+        name = self.readNullTerminatedString()
+        typeof = self.readNullTerminatedString()
+        return (name, typeof)
 
     def readNBytesAsBits(self, nbytes):
         bits = ''
@@ -198,9 +198,11 @@ class BinaryStream:
 
 
 class BitPacker:
+
     """
     Convenience for packing bits that can later be writen as bytes
     """
+
     def __init__(self):
         self.bits = ''
 
