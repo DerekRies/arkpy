@@ -292,7 +292,7 @@ class ArrayProperty(BaseProperty):
           pos = stream.tell()
           try:
             value = stream.readNullTerminatedString()
-          except:
+          except struct.error:
             print 'Exception in array string handling'
             stream.base_stream.seek(pos, 0)
             unicode_size = 2
