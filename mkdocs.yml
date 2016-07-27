@@ -9,6 +9,7 @@ pages:
  - API Documentation:
     - arktypes module: 'arktypesmodule.md'
     - ark module: 'arkmodule.md'
+    - entities module: 'entities.md'
  - File Format Specs: 'formats.md'
  - Contributors Guide: 'contribs.md'
 markdown_extensions:
