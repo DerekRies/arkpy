@@ -98,17 +98,12 @@ class TestStyle:
 
     def test_pep8(self):
         pep8style = pep8.StyleGuide()
-        # result = pep8style.check_files([
-        #     'arkpy/ark.py',
-        #     'arkpy/arktypes.py',
-        #     'arkpy/tests/test_arktypes.py',
-        #     'arkpy/tests/test_ark.py',
-        #     'arkpy/binary.py',
-        #     'arkpy/utils.py'])
         result = pep8style.check_files([
           'tests/test_ark.py',
           'tests/test_arktypes.py',
           'arkpy/binary.py',
           'arkpy/utils.py',
+          'arkpy/ark.py',
+          'arkpy/arktypes.py',
           ])
         assert result.total_errors == 0
