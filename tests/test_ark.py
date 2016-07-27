@@ -1,4 +1,5 @@
 import pytest
+import pep8
 import random
 import os
 
@@ -83,3 +84,15 @@ class TestBulkReads:
           print 'FAILED: %s' % file
           assert False
     assert True
+
+
+@pytest.mark.style
+class TestStyle:
+    def test_pep8(self):
+        pep8style = pep8.StyleGuide()
+        result = pep8style.check_files([
+            'arkpy/ark.py',
+            'arkpy/arktypes.py',
+            'arkpy/binary.py',
+            'arkpy/utils.py'])
+        assert result.total_errors == 0
