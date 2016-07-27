@@ -258,6 +258,7 @@ class ArrayProperty(BaseProperty):
 
   def _set_from_stream(self, stream):
     conversion_table = {
+        'ByteProperty': stream.readChar,
         'IntProperty': stream.readInt32,
         'UIntProperty': stream.readUInt32,
         'UInt32Property': stream.readUInt32,
@@ -360,7 +361,7 @@ class ByteProperty(BaseProperty):
     if self.included:
       if array == False:
         self._write_shared_prop_info(stream)
-      stream.writeNullTerminatedString('None')
+        stream.writeNullTerminatedString('None')
       stream.writeChar(self.value)
 
 
@@ -836,11 +837,13 @@ class TribeData(BaseStruct):
     BaseStruct.__init__(self)
     self.var_name = 'TribeData'
 
+    random_id = utils._gen_tribe_id()
     self.set('TribeName', StrProperty())
     self.set('OwnerPlayerDataID', UInt32Property())
-    self.set('TribeID', IntProperty())
+    self.set('TribeID', IntProperty(value=random_id))
     self.set('MembersPlayerName', ArrayProperty(child_type='StrProperty'))
     self.set('MembersPlayerDataID',ArrayProperty(child_type='UInt32Property'))
+    self.set('MembersRankGroups', ArrayProperty(child_type='ByteProperty'))
     self.set('bSetGovernment', BoolProperty(value=False))
     self.set('TribeAdmins', ArrayProperty(child_type='UInt32Property'))
     # ArrayProperty of TribeAlliance Structs
@@ -872,6 +875,7 @@ class TribeData(BaseStruct):
     self.data['TribeID']._write_to_stream(stream)
     self.data['MembersPlayerName']._write_to_stream(stream)
     self.data['MembersPlayerDataID']._write_to_stream(stream)
+    self.data['MembersRankGroups']._write_to_stream(stream)
     self.data['bSetGovernment']._write_to_stream(stream)
     self.data['TribeAdmins']._write_to_stream(stream)
     self.data['TribeAlliances']._write_to_stream(stream)

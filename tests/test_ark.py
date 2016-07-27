@@ -72,4 +72,14 @@ class TestBulkReads:
           print 'FAILED: %s' % file
           assert False
   def test_read_tribes(self):
+    path = 'data/Servers/Server01/'
+    files = os.listdir(path)
+    for file in files:
+      if '.arktribe' in file:
+        try:
+          file_path = path + file
+          tribe = ark.ArkTribe(file_path)
+        except:
+          print 'FAILED: %s' % file
+          assert False
     assert True
