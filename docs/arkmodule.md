@@ -30,7 +30,10 @@ Character is a higher-level wrapper around the `PrimalPlayerConfigStruct` and `a
 
 ## `ArkProfile` Class
 
-Responsible for loading and creating .arkprofile files. At this moment, this class will not load the PlayerLocalData.arkprofile as that doesnt seem to follow the same structure as LocalPlayer.arkprofile and SteamID.arkprofile files do.
+Responsible for loading and creating .arkprofile files.
+
+!!! Note
+    At this moment, this class will not load the PlayerLocalData.arkprofile as that doesnt seem to follow the same structure as LocalPlayer.arkprofile and SteamID.arkprofile files do.
 
 ArkProfiles describe individual characters, their visual appearance, and some persistent data about them like Experience, Levels, and Engrams.
 

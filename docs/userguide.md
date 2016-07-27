@@ -63,7 +63,8 @@ Let's try leveling our character up.
 # Level: 10
 ```
 
-**Important:** Arkpy is just a library for reading and writing the data, it doesn't provide (yet) any support for making sure you put in the right data. In the previous example we need to apply the appropriate amount of experience for the levels. Modded servers may also change the experience needed per level, so it's best if you check to see what those rates are first.
+!!! Note
+    Arkpy is just a library for reading and writing the data, it doesn't provide (yet) any support for making sure you put in the right data. In the previous example we need to apply the appropriate amount of experience for the levels. Modded servers may also change the experience needed per level, so it's best if you check to see what those rates are first.
 
 What good is leveling up if you don't spend any stat points?
 ```python

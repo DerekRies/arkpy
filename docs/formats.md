@@ -18,7 +18,8 @@ If you open any of the aforementioned file types in a Hex Editor, like 010 Edito
 
 The data is already fairly easy to understand, as there are many strings with the word 'Property' at the end of them. These identifiers let us know how to read in the proper data types. All these primitive data types will first be explained before going on to the individual file types.
 
-**Note: Ark files are in Little-Endian**
+!!! Note
+    Ark files are in Little-Endian
 - - -
 
 ## Primitive Data Types

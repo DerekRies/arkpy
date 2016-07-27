@@ -11,3 +11,5 @@ pages:
     - ark module: 'arkmodule.md'
  - File Format Specs: 'formats.md'
  - Contributors Guide: 'contribs.md'
+markdown_extensions:
+ - admonition
