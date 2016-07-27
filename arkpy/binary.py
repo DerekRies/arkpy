@@ -64,6 +64,15 @@ class BinaryStream:
         self.readByte()
         return s
 
+    def readUnicodeString(self):
+        pos = self.tell()
+        unicode_size = 2
+        while self.readInt16() != 0:
+            unicode_size = unicode_size + 2
+        self.base_stream.seek(pos, 0)
+        unicode_str = self.readBytes(unicode_size)
+        return unicode_str
+
     def read_pair(self):
       name = self.readNullTerminatedString()
       typeof = self.readNullTerminatedString()

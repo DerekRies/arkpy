@@ -221,9 +221,6 @@ class StrProperty(BaseProperty):
         stream.base_stream.seek(pos, 0)
         unicode_str = stream.readBytes(self.size)
         self.value = unicode_str
-        # self.value = unicode(unicode_str, encoding='utf_16_le')
-        # print self.value
-
 
   def set(self, value):
     self.value = str(value)
@@ -295,12 +292,7 @@ class ArrayProperty(BaseProperty):
           except struct.error:
             print 'Exception in array string handling'
             stream.base_stream.seek(pos, 0)
-            unicode_size = 2
-            while stream.readInt16() != 0:
-              unicode_size = unicode_size + 2
-            stream.base_stream.seek(pos, 0)
-            unicode_str = stream.readBytes(unicode_size)
-            value = unicode_str
+            value = stream.readUnicodeString()
         else:
           # value = conversion_table.get(self.child_type, BaseStruct)
           value = conversion_table[self.child_type]()
