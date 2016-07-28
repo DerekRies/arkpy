@@ -1,4 +1,4 @@
-site_name: My Docs
+site_name: Arkpy Docs
 theme: readthedocs
 repo_url: https://github.com/DerekRies/arkpy
 extra_css:
@@ -6,6 +6,7 @@ extra_css:
 pages:
  - Home: 'index.md'
  - User Guide: 'userguide.md'
+ - Tutorials: 'tutorials.md'
  - API Documentation:
     - arktypes module: 'arktypesmodule.md'
     - ark module: 'arkmodule.md'

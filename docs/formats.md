@@ -226,10 +226,11 @@ For each file type I'll start off with the Header, show a simple example of what
 
 These files often exclude chunks of data that are default, so in many cases there will be data missing in these files. In the Struct descriptions I will include all of their child properties and their default values if applicable. Also I will not be describing the structs Byte by Byte, but rather Property by Property. So if you are not familiar yet with the Property structure Ark uses refer back to the previous section.
 
-**Note: All Files are Terminated with a NTString 'None' and 4 NULL Bytes**
+!!! Note
+    All Files are Terminated with a NTString 'None' and 4 NULL Bytes
 - - -
 
-### .arkcharactersetting
+## .arkcharactersetting
 
 These files describe the templates, or saved presets, that you can choose to quickly create a character off of on the character creation screen. They are relatively simple and contain no compressed data.
 
@@ -308,9 +309,10 @@ CharacterPreset<Struct\> **CharacterSetting** (Container Struct)
 
 - - -
 
-### .arkprofile
+## .arkprofile
 
-**IMPORTANT: This section refers to any LocalPlayer.arkprofile, or SteamID.arkprofile but not the PlayerLocalData.arkprofile file as that follows a different structure**
+!!! Important
+    This section refers to any **LocalPlayer.arkprofile**, or **SteamID.arkprofile** but not the **PlayerLocalData.arkprofile** file as that follows a different structure
 
 .arkprofile files contain all the data relevant to the player character, apart from things handled at the world level like Inventory and Position.
 
@@ -464,7 +466,7 @@ PrimalPersistentCharacterStatsStruct<StructProperty\> **MyPersistentCharacterSta
 
 - - -
 
-### .arktribe
+## .arktribe
 
 **Header**
 

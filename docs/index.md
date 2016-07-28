@@ -1,11 +1,15 @@
-ARKpy
+ARKpy - v0.0
 ====
 
-**v0.0**
+
 
 ARKpy is a library for reading and writing the file formats of ARK: Survival Evolved with the python programming language. ARKpy does not simply look for the offsets of particular strings to find the data (like other existing libraries/scripts), but reads the entire data structure of the file into memory.
 
 For those interested in the reverse engineering of the file types the specifications can be found among the library docs.
+
+!!! Note
+    If you'd like to help with reverse engineering the **.ark** World File, please reach out.
+
 
 - - -
 

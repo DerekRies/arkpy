@@ -1,3 +1,6 @@
+!!! Note
+    This part of the documentation is geared towards how to use the library for some of the more general tasks, as well as some information about the general structure of the data you'll be dealing with.
+
 # Installation
 
 ```
@@ -8,7 +11,7 @@ pip install arkgamepy
 
 # Getting Started
 
-This section will help you get started using arkpy, by walking through some of the features provided by the library in a series of examples. If you're looking for API specific documentation check out the API Docs section.
+This section will help you get started using arkpy, by walking through some of the features provided by the library in a series of examples. If you're looking for API specific documentation check out the [API Docs](arkmodule.md) section.
 
 
 ## Reading an .arkprofile File
@@ -122,16 +125,60 @@ You can also enumerate through the stats and display their values using the Enum
 
 Maybe our character needs an engram or two now that he's leveled up.
 ```python
+>>> from arkpy import arktypes
 >>> campfire_path = 'BlueprintGeneratedClass /Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire_C'
 >>> campfire = ark.arktypes.ObjectProperty(campfire_path)
 >>> profile.character.engrams.value.append(campfire)
 >>> print profile.character.engrams
 ```
 
-Because the engrams property on the character is an ArrayProperty[ObjectProperty] there's a lot of text that goes in to adding just a single engram. Especially important is the Entity Path for the engram. An easier way to do this is to use the Object Entity Path Two-Way Dictionaries.
+## Using the Entities Module
 
-## Using Object Entity Path Two-Way Dictionary
+Because the engrams property on the character is an ArrayProperty[ObjectProperty] there's a lot of text that goes in to adding just a single engram. Especially important is the Entity Path for the engram. An easier way to do this is to use the `Enum`s in the [entities module](entities.md).
 
-This dictionary is especially helpful for converting a simple description of an item or engram like 'Campfire' to a path that looks like: 'BlueprintGeneratedClass /Game/PrimalEarth/CoreBlueprints...' and vice-versa.
+Let's redo the previous example and add the campfire engram to the character's learned engrams.
 
-Coming Soon.
+```python
+from arkpy import arktypes, entities
+campfire = arktypes.ObjectProperty(entities.Structure.Campfire.value)
+profile.character.engrams.value.append(campfire)
+```
+
+## Saving a Character
+
+Once we've completed all of our changes we can save the profile to an .arkprofile file by calling the `save_to_file()` method.
+
+```python
+# Recommended: don't overwrite the files you read in without backing them
+# up as you may corrupt them in the process.
+profile.save_to_file('data/SavedArksLocal/LocalPlayer.edit.arkprofile')
+```
+
+
+## Loading the Generated Character File
+
+!!! Important
+    Always keep backups of the files before you make any changes to them. Also don't remove the **.profilebak** files when you replace the **.arkprofile** files.
+
+First, let's take a look at how Ark loads game files into memory.
+
+### Ark Loading Process
+
+1. Loads the world save, **.ark** file
+2. Looks for a file named **LocalPlayer.arkprofile**, if not found, uses any other **.arkprofile** file it can find.
+3. Copys contents of **LocalPlayer.arkprofile** into the **.profilebak** file.
+4. On exit or world save, the the data is saved into the appropriate files.
+
+!!! Note
+    **You won't see any changes you made (except for a few like character name) to a profile reflected on the character, until the character is respawned.**
+
+    This is because there are two locations relevant to player character data. The first is from the .arkprofile file, and the second is in the world save file where an instance of the player character is. Respawning creates a new instance of the character based on the data that was inside the .arkprofile file.
+
+Now with this in mind, in the appropriate directory, simply rename the old **LocalPlayer.arkprofile** (or **steamid.arkprofile**) to something like **LocalPlayer.old.arkprofile**. You can rename it whatever you like; I like using **.old** and even **.old-MO-DD-YY-TIME** to differentiate between them.
+
+
+## More
+
+If you'd like to see more, you've got two options. You can read the [API Documentation](arkmodule.md) to learn what methods and properties are available to you. Or, you can head on over to the [Tutorials](tutorials.md) to see much longer and complete examples using Arkpy.
+
+If there's anything that is confusing and you think could be explained better, please leave an issue on Github labeled **docs**.
