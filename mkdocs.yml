@@ -13,5 +13,6 @@ pages:
     - entities module: 'entities.md'
  - File Format Specs: 'formats.md'
  - Contributors Guide: 'contribs.md'
+ - Changelog: 'changelog.md'
 markdown_extensions:
  - admonition
