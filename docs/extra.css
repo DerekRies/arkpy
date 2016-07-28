@@ -9,3 +9,7 @@ code {
 .wy-nav-content ul {
   font-size: 16px;
 }
+
+h1, h2 {
+    margin-top: 30px;
+}
