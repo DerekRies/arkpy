@@ -25,6 +25,11 @@ For those interested in the reverse engineering of the file types the specificat
     - **Item Blueprint Paths/IDs**
 
 
+## Installation
+```
+pip install arkgamepy
+```
+
 ## Usage
 
 #### Reading an .arkprofile file
@@ -52,6 +57,3 @@ bones = profile.character.body_modifiers
 for bone in BoneMap:
   print '%s: %s' % (bone.name, bones[bone])
 ```
-
-## Installation
-Soon to be hosted on Pypi.
