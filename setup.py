@@ -48,7 +48,7 @@ setup(
         # 'Programming Language :: Python :: 3.3',
         # 'Programming Language :: Python :: 3.4',
     ],
-    install_requires=requires
+    install_requires=requires,
     keywords=['ark', 'game', 'ark survival', 'ark survival evolved',
               '.ark', '.arkprofile', '.arktribe', '.arkcharactersetting',
               'reverse engineering', 'game files'],
