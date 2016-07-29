@@ -6,3 +6,4 @@ from arkpy import arktypes
 from arkpy import ark
 from arkpy import binary
 from arkpy import utils
+from arkpy import entities
