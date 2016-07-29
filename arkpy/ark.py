@@ -479,6 +479,10 @@ class ArkTribe:
         return self.container.data['MembersPlayerDataID']
 
     @property
+    def members_ranks(self):
+        return self.container.data['MembersRankGroups']
+
+    @property
     def members(self):
         return zip(self.members_names.value, self.members_ids.value)
 

@@ -111,8 +111,9 @@ Responsible for loading and creating .arktribe files. ArkTribes describe individ
 | **name** | `str` | Tribe's name |
 | **owner_id** | `str` | The PlayerID belonging to the owner of the tribe |
 | **tribe_id** | `str` | Tribe's ID, same as file name |
-| **members_names** | `ArrayProperty[]` | An ArrayProperty of the names belonging to all the members in the tribe |
-| **members_ids** | `ArrayProperty[]` | An ArrayProperty of the IDs belonging to all the members in the tribe |
+| **members_names** | `ArrayProperty[StrProperty]` | An ArrayProperty of the names belonging to all the members in the tribe |
+| **members_ids** | `ArrayProperty[UInt32Property]` | An ArrayProperty of the IDs belonging to all the members in the tribe |
+| **members_ranks** | `ArrayProperty[ByteProperty]` | An ArrayProperty of the ranks that each member holds |
 | **members** | `list[(str, int)]` | Convenience property, returns a list of member tuples. Each tuple has the members name and then the members ID. **NOTE:** the data in the tuple is the actual python data-type, not the Property wrapper. |
 | **government_set** | `bool` | True when this Tribe has a government structure |
 | **government** | `TribeGovernment` | `TribeGovernment` struct with the government configuration for this Tribe. |
