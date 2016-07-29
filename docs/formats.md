@@ -3,6 +3,9 @@ File Format Specifications
 
 This section will attempt to explain the binary file formats for the `.arkprofile`, `.arktribe`, and `.arkcharactersetting` file extensions. As well as the structure of the primitive data-types used in the files. Some familiarity with basic Data Types and Hex Editors is assumed.
 
+!!! Note
+    The **.ark** world save file is not included in this section as I haven't reversed it yet. If you'd like to help with the reversing process please reach out.
+
 If you open any of the aforementioned file types in a Hex Editor, like 010 Editor or HxD, you'll see a bunch of strings (if it's set to display text) in the right hand side (like below).
 
 
@@ -230,7 +233,7 @@ These files often exclude chunks of data that are default, so in many cases ther
     All Files are Terminated with a NTString 'None' and 4 NULL Bytes
 - - -
 
-## .arkcharactersetting
+## .arkcharactersetting file format
 
 These files describe the templates, or saved presets, that you can choose to quickly create a character off of on the character creation screen. They are relatively simple and contain no compressed data.
 
@@ -309,7 +312,7 @@ CharacterPreset<Struct\> **CharacterSetting** (Container Struct)
 
 - - -
 
-## .arkprofile
+## .arkprofile file format
 
 !!! Important
     This section refers to any **LocalPlayer.arkprofile**, or **SteamID.arkprofile** but not the **PlayerLocalData.arkprofile** file as that follows a different structure
@@ -466,7 +469,7 @@ PrimalPersistentCharacterStatsStruct<StructProperty\> **MyPersistentCharacterSta
 
 - - -
 
-## .arktribe
+## .arktribe file format
 
 **Header**
 
@@ -550,6 +553,7 @@ TribeData<StructProperty\> **TribeData** (Container Struct)
 | **TribeID** | IntProperty | n/a |
 | **MembersPlayerName** | ArrayProperty [StrProperty] | [None] |
 | **MembersPlayerDataID** | ArrayProperty [UInt32Property] | [None] |
+| **MembersRankGroups** | ArrayProperty [ByteProperty] | [None] |
 | **bSetGovernment** | BoolProperty | False |
 | **TribeAdmins** | ArrayProperty[UInt32Property] | [None] |
 | **TribeAlliances** | ArrayProperty[AllianceStruct<StructProperty\>]| [None] |
