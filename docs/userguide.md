@@ -20,12 +20,12 @@ This section will help you get started using arkpy, by walking through some of t
 
 ## Reading an .arkprofile File
 
-Start by importing the ark module from the arkpy package
+Start by importing the [**ark module**](arkmodule.md) from the arkpy package
 ```python
 >>> from arkpy import ark
 ```
 
-Now let's try reading an arkprofile stored in our SavedArksLocal directory
+Now let's try reading **.arkprofile** file stored in our SavedArksLocal directory
 ```python
 >>> file_path = 'data/SavedArksLocal/LocalPlayer.arkprofile'
 >>> profile = ark.ArkProfile(file_path)
@@ -33,7 +33,7 @@ Now let's try reading an arkprofile stored in our SavedArksLocal directory
 # <arkpy.ark.ArkProfile instance at 0x7f19767893f8>
 ```
 
-Now that we've got an instance of ArkProfile we can start accessing some of the data, like the Character information.
+Now that we've got an instance of [**ArkProfile**](arkmodule.md#arkprofile-class) we can start accessing some of the data, like the [**Character**](arkmodule.md#character-class) information.
 ```python
 >>> print 'Name: %s' % profile.character.name.value
 # Name: Woobles
@@ -43,9 +43,9 @@ Now that we've got an instance of ArkProfile we can start accessing some of the 
 # Sex: Male
 ```
 
-You'll see when we accessed the data belonging to character.name we did so with the **.value** property. This is because all the data parsed from the ark files are parsed as wrappers around the Data Types rather than the python Data Types themselves.
+You'll see when we accessed the data belonging to character.name we did so with the **.value** property. This is because all the data parsed from the ark files are parsed as wrappers around the Data Types rather than the python Data Types themselves. These data-types are found in the [**arktypes module**](arktypesmodule.md)
 
-If we were to just character.name itself we'd get the following.
+If we were to just print character.name itself we'd get the following.
 ```python
 >>> print profile.character.name
 # <StrProperty> Woobles
@@ -104,7 +104,7 @@ What is that? Well, those are all of our stats, currently at 0. You can set thes
 
 ## Using Enums for Index-Based Values
 
-If you don't know the index for the value you wish to manipulate, then you can use the Enums provided by Arkpy. Let's go back to the stat point example and use an Enum instead.
+If you don't know the index for the value you wish to manipulate, then you can use the Enums provided by Arkpy. Let's go back to the stat point example and use the [**StatMap**](arkmodule.md#statmap-class) Enum instead.
 
 
 ```python
@@ -113,7 +113,7 @@ If you don't know the index for the value you wish to manipulate, then you can u
 >>> profile.character.stat_points[StatMap.Weight].set(4)
 ```
 
-You can also enumerate through the stats and display their values using the Enum:
+You can also enumerate through the stats and display their values using the [**StatMap**](arkmodule.md#statmap-class) Enum:
 
 ```python
 >>> stats = profile.character.stat_points
@@ -144,9 +144,9 @@ Maybe our character needs an engram or two now that he's leveled up.
 
 ## Using the Entities Module
 
-Because the engrams property on the character is an ArrayProperty[ObjectProperty] there's a lot of text that goes in to adding just a single engram. Especially important is the Entity Path for the engram. An easier way to do this is to use the `Enum`s in the [entities module](entities.md).
+Because the engrams property on the character is an ArrayProperty[ObjectProperty] there's a lot of text that goes in to adding just a single engram. Especially important is the Entity Path for the engram. An easier way to do this is to use the `Enum`s in the [**entities module**](entities.md).
 
-Let's redo the previous example and add the campfire engram to the character's learned engrams.
+Let's redo the previous example and add the campfire engram to the character's learned engrams using the [**Structure Entities Enum**](entities.md#structure-class).
 
 ```python
 from arkpy import arktypes, entities
@@ -158,7 +158,7 @@ profile.character.engrams.value.append(campfire)
 
 ## Saving a Character
 
-Once we've completed all of our changes we can save the profile to an .arkprofile file by calling the `save_to_file()` method.
+Once we've completed all of our changes we can save the [**profile**](arkmodule.md#arkprofile-class) to an **.arkprofile** file by calling the `save_to_file()` method.
 
 ```python
 # Recommended: don't overwrite the files you read in without backing them

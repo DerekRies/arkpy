@@ -14,12 +14,12 @@ Character is a higher-level wrapper around the `PrimalPlayerConfigStruct` and `a
 |------|------|-------------|
 | **name** | `StrProperty` | A Character's name (not the steam name) |
 | **isFemale** | `BoolProperty` | Flag specifying whether or not the character is female |
-| **body_colors** | `list[LinearColor]` | A python list of `LinearColor`s indexed according to the `BodyColorMap` |
-| **bone_modifiers** | `list[FloatProperty]` | A python list of bone values (0.0-1.0) to configure the characters appearance, indexed according to `BoneMap` |
+| **body_colors** | `list[LinearColor]` | A python list of `LinearColor`s indexed according to the [**`BodyColorMap`**](arkmodule.md#bodycolormap-class) |
+| **bone_modifiers** | `list[FloatProperty]` | A python list of bone values (0.0-1.0) to configure the characters appearance, indexed according to [**`BoneMap`**](arkmodule.md#bonemap-class) |
 | **spawn_region** | `IntProperty` | The region of the map this character spawned from. An integer from 0-9 |
 | **experience** | `FloatProperty` | The experience that this character has gained |
 | **level_ups** | `UInt16Property` | The number of times a character has leveled up. This is the character's level - 1. |
-| **stat_points** | `list[ByteProperty]` | A python list of `ByteProperty`, indexed according to `StatMap`, where each value is the number of times that stat has been leveled up |
+| **stat_points** | `list[ByteProperty]` | A python list of `ByteProperty`, indexed according to [**`StatMap`**](arkmodule.md#statmap-class), where each value is the number of times that stat has been leveled up |
 | **engram_points** | `IntProperty` | The number of engram points that this character has available to them, not the total amount they've earned. |
 | **engrams** | `ArrayProperty[ObjectProperty]` | An ArrayProperty of ObjectPropertys where each item is an Object Entity Path for the engrams that have been learned |
 | **default_slots** | `list[ObjectProperty]` | A python list of ObjectPropertys where each item is indexed by it's slot position, and the ObjectProperty is an Object Entity Path for an item/engram |
@@ -46,8 +46,8 @@ ArkProfiles describe individual characters, their visual appearance, and some pe
 | **name** | `str`| **'PrimalPlayerData_'** appended with the number of this file |
 | **game_mode** | `str`| Always **'PersistentLevel'** |
 | **map_name** | `str`| Name of the map this character is on, 'TheIsland' or 'TheCenter' |
-| **map_path** | `str`| Path to the map, looks like '/Game/Maps/TheIslandSubMaps/TheIsland'. Can use the `GameMapMap` to reference these paths easier. |
-| **character** | `Character`| Wrapper around the low-level structs for character information. Recommended to use this rather than digging into the data dict |
+| **map_path** | `str`| Path to the map, looks like '/Game/Maps/TheIslandSubMaps/TheIsland'. Can use the [**`GameMapMap`**](arkmodule.md#gamemapmap-class) to reference these paths easier. |
+| **character** | [**`Character`**](arkmodule.md#character-class) | Wrapper around the low-level structs for character information. Recommended to use this rather than digging into the data dict |
 | **player_id** | `UInt64Property`| |
 | **player_name** | `StrProperty`| Player's steam name they used when they first created this character. This value is not updated if they change their steam name |
 | **unique_id** | `UniqueNetIdRepl`| |
@@ -106,7 +106,7 @@ Responsible for loading and creating .arktribe files. ArkTribes describe individ
 | **number** | `int`| The number after 'PrimalTribeData_' in the file, which is probably just an incrementing integer for each file that's created. |
 | **game_mode** | `str`| Always **'PersistentLevel'** |
 | **map_name** | `str`| Name of the map this character is on, 'TheIsland' or 'TheCenter' |
-| **map_path** | `str`| Path to the map, looks like '/Game/Maps/TheIslandSubMaps/TheIsland'. Can use the `GameMapMap` to reference these paths easier. |
+| **map_path** | `str`| Path to the map, looks like '/Game/Maps/TheIslandSubMaps/TheIsland'. Can use the [**`GameMapMap`**](arkmodule.md#gamemapmap-class) to reference these paths easier. |
 | **version** | `int` | 1 for now |
 | **name** | `str` | Tribe's name |
 | **owner_id** | `str` | The PlayerID belonging to the owner of the tribe |
@@ -142,7 +142,7 @@ Constructor method for creating an ArkTribe. Can be created programmatically or 
 ## `BoneMap` Class
 ### extends `IntEnum`
 
-`BoneMap` is a mapping of the bone names for character configuration to the appropriate index values they can be found in.
+`BoneMap` is a mapping of the bone names for character configuration to the appropriate index values they can be found in. Useful for accessing the `.bone_modifiers` property on the [**Character**](arkmodule.md#character-class) class
 
 | Name | Value |
 |------|-------|
@@ -175,7 +175,7 @@ Constructor method for creating an ArkTribe. Can be created programmatically or 
 ## `BodyColorMap` Class
 ### extends `IntEnum`
 
-`BodyColorMap` is a mapping of readable body color regions, to the index values used by the game to represent them
+`BodyColorMap` is a mapping of readable body color regions, to the index values used by the game to represent them. Useful for accessing the `.body_colors` property on the [**Character**](arkmodule.md#character-class) class
 
 | Name       | Value |
 |------------|-------|
@@ -188,7 +188,7 @@ Constructor method for creating an ArkTribe. Can be created programmatically or 
 ## `StatMap` Class
 ### extends `IntEnum`
 
-`StatMap` is a mapping of the stat names for character stats to the appropriate index values they can be found in.
+`StatMap` is a mapping of the stat names for character stats to the appropriate index values they can be found in. Useful for accessing the `.stat_points` property on the [**Character**](arkmodule.md#character-class) class
 
 | Name   | Value |
 |--------|---|

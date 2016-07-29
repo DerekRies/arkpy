@@ -31,7 +31,7 @@ BaseProperty is an abstract class that is a low-level wrapper around python data
 ## `StrProperty` Class
 ### extends `BaseProperty`
 
-StrProperty is a low-level wrapper around the string data-type. Reads and writes a length-prefixed, null-terminated string. You probably won't need to instantiate new `StrProperty`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+StrProperty is a low-level wrapper around the string data-type. Reads and writes a length-prefixed, null-terminated string. You probably won't need to instantiate new `StrProperty`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -49,7 +49,7 @@ Constructor method for creating StrPropertys. Can be instantiated with a value, 
 | Parameter Name | Type | Description |
 |------|------|-------------|
 |**value** | `str`  | Initial value to set StrPropertys value to|
-|**stream**| `BinaryStream` | (optional) A Binary stream that this StrProperty can build itself from |
+|**stream**| `BinaryStream` | (optional) A `BinaryStream` that this StrProperty can build itself from |
 
   - **returns** a new `StrProperty`
 
@@ -71,11 +71,11 @@ Casts value to a `str` if it isn't one already and sets StrProperty.value to thi
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this StrProperty to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this StrProperty to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
 
@@ -85,7 +85,7 @@ Casts value to a `str` if it isn't one already and sets StrProperty.value to thi
 ## `ArrayProperty` Class
 ### extends `BaseProperty`
 
-ArrayProperty is a low-level wrapper around the python `list` datatype. Reads and writes a length prefixed array of properties. You probably won't need to instantiate new `ArrayProperty`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+ArrayProperty is a low-level wrapper around the python `list` datatype. Reads and writes a length prefixed array of properties. You probably won't need to instantiate new `ArrayProperty`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -129,11 +129,11 @@ Constructor method for creating ArrayProperty. Can be instantiated as empty, or 
 
 **_write_to_stream**(stream)
 
-**(Internal Method)** Writes this ArrayProperty to the BinaryStream that's been provided.
+**(Internal Method)** Writes this ArrayProperty to the `BinaryStream` that's been provided.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 
 
 
@@ -142,7 +142,7 @@ Constructor method for creating ArrayProperty. Can be instantiated as empty, or 
 ## `ByteProperty` Class
 ### extends `BaseProperty`
 
-ByteProperty is a low-level wrapper around the python `int` data-type. Reads and writes an 8 bit integer, or char. You probably won't need to instantiate new `ByteProperty`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+ByteProperty is a low-level wrapper around the python `int` data-type. Reads and writes an 8 bit integer, or char. You probably won't need to instantiate new `ByteProperty`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -161,7 +161,7 @@ Constructor method for creating a `ByteProperty`. Can be instantiated with a val
 |------|------|-------------|
 |**value** | `int`  | (optional) An integer (keep it within 8 bits) that this ByteProperty's value will be set to |
 |**index** | `int`  | (optional) Sets this ByteProperty's index to this |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this ByteProperty can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this ByteProperty can build itself from |
 
   - **returns** a new `ByteProperty`
 
@@ -183,11 +183,11 @@ Casts value to an `int` if it isn't one already and sets ByteProperty.value to t
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this ByteProperty to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this ByteProperty to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
 
@@ -198,7 +198,7 @@ Casts value to an `int` if it isn't one already and sets ByteProperty.value to t
 ## `ObjectProperty` Class
 ### extends `BaseProperty`
 
-ObjectProperty is a low-level wrapper around Arks object convention, which is a string for the value and an int describing quantity. You probably won't need to instantiate new `ObjectProperty`s unless you are adding to an ArrayProperty[ObjectProperty] like Engrams, or to a list of ObjectProperties like DefaultSlots. But, they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+ObjectProperty is a low-level wrapper around Arks object convention, which is a string for the value and an int describing quantity. You probably won't need to instantiate new `ObjectProperty`s unless you are adding to an ArrayProperty[ObjectProperty] like Engrams, or to a list of ObjectProperties like DefaultSlots. But, they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -218,7 +218,7 @@ Constructor method for creating a `ObjectProperty`. Can be instantiated with a v
 |------|------|-------------|
 |**value** | `str`  | (optional) A string that this ObjectProperty's value will be set to. ObjectProperty values are almost always an Entity Path. |
 |**index** | `int`  | (optional) Sets this ObjectProperty's index to this |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this ObjectProperty can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this ObjectProperty can build itself from |
 
   - **returns** a new `ObjectProperty`
 
@@ -240,11 +240,11 @@ Casts value to a `str` if it isn't one already and sets ObjectProperty.value to 
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this ObjectProperty to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this ObjectProperty to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
 
@@ -254,7 +254,7 @@ Casts value to a `str` if it isn't one already and sets ObjectProperty.value to 
 ## `FloatProperty` Class
 ### extends `BaseProperty`
 
-FloatProperty is a low-level wrapper around the python `float` data-type. Reads and writes an 32 bit float. You probably won't need to instantiate new `FloatProperty`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+FloatProperty is a low-level wrapper around the python `float` data-type. Reads and writes an 32 bit float. You probably won't need to instantiate new `FloatProperty`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -273,7 +273,7 @@ Constructor method for creating a `FloatProperty`. Can be instantiated with a va
 |------|------|-------------|
 |**value** | `float`  | (optional) A float that this FloatProperty's value will be set to. |
 |**index** | `int`  | (optional) Sets this FloatProperty's index to this |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this FloatProperty can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this FloatProperty can build itself from |
 
   - **returns** a new `FloatProperty`
 
@@ -289,11 +289,11 @@ Casts value to a `float` if it isn't one already and sets FloatProperty.value to
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this FloatProperty to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this FloatProperty to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
   - **returns** `None`
@@ -305,7 +305,7 @@ Casts value to a `float` if it isn't one already and sets FloatProperty.value to
 ## `DoubleProperty` Class
 ### extends `BaseProperty`
 
-DoubleProperty is a low-level wrapper around the python `float` data-type. Reads and writes an 64 bit float (double). You probably won't need to instantiate new `DoubleProperty`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+DoubleProperty is a low-level wrapper around the python `float` data-type. Reads and writes an 64 bit float (double). You probably won't need to instantiate new `DoubleProperty`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -323,7 +323,7 @@ Constructor method for creating a `DoubleProperty`. Can be instantiated with a v
 | Parameter Name | Type | Description |
 |------|------|-------------|
 |**value** | `float`  | (optional) A float that this DoubleProperty's value will be set to. |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this DoubleProperty can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this DoubleProperty can build itself from |
 
   - **returns** a new `DoubleProperty`
 
@@ -339,11 +339,11 @@ Casts value to a `float` if it isn't one already and sets DoubleProperty.value t
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this DoubleProperty to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this DoubleProperty to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
   - **returns** `None`
@@ -355,7 +355,7 @@ Casts value to a `float` if it isn't one already and sets DoubleProperty.value t
 ## `Int16Property` Class
 ### extends `BaseProperty`
 
-Int16Property is a low-level wrapper around the python `int` data-type. Reads and writes a 16 bit integer. You probably won't need to instantiate new `Int16Property`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+Int16Property is a low-level wrapper around the python `int` data-type. Reads and writes a 16 bit integer. You probably won't need to instantiate new `Int16Property`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -373,7 +373,7 @@ Constructor method for creating a `Int16Property`. Can be instantiated with a va
 | Parameter Name | Type | Description |
 |------|------|-------------|
 |**value** | `int`  | (optional) A int that this Int16Property's value will be set to. |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this Int16Property can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this Int16Property can build itself from |
 
   - **returns** a new `Int16Property`
 
@@ -389,11 +389,11 @@ Casts value to a `int` if it isn't one already and sets Int16Property.value to t
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this Int16Property to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this Int16Property to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
   - **returns** `None`
@@ -405,7 +405,7 @@ Casts value to a `int` if it isn't one already and sets Int16Property.value to t
 ## `UInt16Property` Class
 ### extends `BaseProperty`
 
-UInt16Property is a low-level wrapper around the python `int` data-type. Reads and writes a 16 bit unsigned integer. You probably won't need to instantiate new `UInt16Property`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+UInt16Property is a low-level wrapper around the python `int` data-type. Reads and writes a 16 bit unsigned integer. You probably won't need to instantiate new `UInt16Property`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -423,7 +423,7 @@ Constructor method for creating a `UInt16Property`. Can be instantiated with a v
 | Parameter Name | Type | Description |
 |------|------|-------------|
 |**value** | `int`  | (optional) A int that this UInt16Property's value will be set to. |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this UInt16Property can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this UInt16Property can build itself from |
 
   - **returns** a new `UInt16Property`
 
@@ -439,11 +439,11 @@ Casts value to a `int` if it isn't one already and sets UInt16Property.value to 
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this UInt16Property to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this UInt16Property to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
   - **returns** `None`
@@ -455,7 +455,7 @@ Casts value to a `int` if it isn't one already and sets UInt16Property.value to 
 ## `IntProperty` Class
 ### extends `BaseProperty`
 
-IntProperty is a low-level wrapper around the python `int` data-type. Reads and writes a 32 bit integer. You probably won't need to instantiate new `IntProperty`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+IntProperty is a low-level wrapper around the python `int` data-type. Reads and writes a 32 bit integer. You probably won't need to instantiate new `IntProperty`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -473,7 +473,7 @@ Constructor method for creating a `IntProperty`. Can be instantiated with a valu
 | Parameter Name | Type | Description |
 |------|------|-------------|
 |**value** | `int`  | (optional) A int that this IntProperty's value will be set to. |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this IntProperty can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this IntProperty can build itself from |
 
   - **returns** a new `IntProperty`
 
@@ -489,11 +489,11 @@ Casts value to a `int` if it isn't one already and sets IntProperty.value to thi
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this IntProperty to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this IntProperty to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
   - **returns** `None`
@@ -505,7 +505,7 @@ Casts value to a `int` if it isn't one already and sets IntProperty.value to thi
 ## `UInt32Property` Class
 ### extends `BaseProperty`
 
-UInt32Property is a low-level wrapper around the python `int` data-type. Reads and writes a 32 bit unsigned integer. You probably won't need to instantiate new `UInt32Property`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+UInt32Property is a low-level wrapper around the python `int` data-type. Reads and writes a 32 bit unsigned integer. You probably won't need to instantiate new `UInt32Property`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -523,7 +523,7 @@ Constructor method for creating a `UInt32Property`. Can be instantiated with a v
 | Parameter Name | Type | Description |
 |------|------|-------------|
 |**value** | `int`  | (optional) A int that this UInt32Property's value will be set to. |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this UInt32Property can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this UInt32Property can build itself from |
 
   - **returns** a new `UInt32Property`
 
@@ -539,11 +539,11 @@ Casts value to a `int` if it isn't one already and sets UInt32Property.value to 
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this UInt32Property to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this UInt32Property to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
   - **returns** `None`
@@ -555,7 +555,7 @@ Casts value to a `int` if it isn't one already and sets UInt32Property.value to 
 ## `Int64Property` Class
 ### extends `BaseProperty`
 
-Int64Property is a low-level wrapper around the python `int` data-type. Reads and writes a 64 bit integer. You probably won't need to instantiate new `Int64Property`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+Int64Property is a low-level wrapper around the python `int` data-type. Reads and writes a 64 bit integer. You probably won't need to instantiate new `Int64Property`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -573,7 +573,7 @@ Constructor method for creating a `Int64Property`. Can be instantiated with a va
 | Parameter Name | Type | Description |
 |------|------|-------------|
 |**value** | `int`  | (optional) A int that this Int64Property's value will be set to. |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this Int64Property can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this Int64Property can build itself from |
 
   - **returns** a new `Int64Property`
 
@@ -589,11 +589,11 @@ Casts value to a `int` if it isn't one already and sets Int64Property.value to t
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this Int64Property to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this Int64Property to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
   - **returns** `None`
@@ -605,7 +605,7 @@ Casts value to a `int` if it isn't one already and sets Int64Property.value to t
 ## `UInt64Property` Class
 ### extends `BaseProperty`
 
-UInt64Property is a low-level wrapper around the python `int` data-type. Reads and writes a 64 bit unsigned integer. You probably won't need to instantiate new `UInt64Property`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+UInt64Property is a low-level wrapper around the python `int` data-type. Reads and writes a 64 bit unsigned integer. You probably won't need to instantiate new `UInt64Property`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -623,7 +623,7 @@ Constructor method for creating a `UInt64Property`. Can be instantiated with a v
 | Parameter Name | Type | Description |
 |------|------|-------------|
 |**value** | `int`  | (optional) A int that this UInt64Property's value will be set to. |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this UInt64Property can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this UInt64Property can build itself from |
 
   - **returns** a new `UInt64Property`
 
@@ -639,11 +639,11 @@ Casts value to a `int` if it isn't one already and sets UInt64Property.value to 
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this UInt64Property to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this UInt64Property to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
   - **returns** `None`
@@ -655,7 +655,7 @@ Casts value to a `int` if it isn't one already and sets UInt64Property.value to 
 ## `BoolProperty` Class
 ### extends `BaseProperty`
 
-BoolProperty is a low-level wrapper around the python `int` data-type. Reads and writes a Boolean value. You probably won't need to instantiate new `BoolProperty`s but they will be exposed by the FileType Wrappers like `ArkProfile`, and `ArkTribe`.
+BoolProperty is a low-level wrapper around the python `int` data-type. Reads and writes a Boolean value. You probably won't need to instantiate new `BoolProperty`s but they will be exposed by the FileType Wrappers like [**ArkProfile**](arkmodule.md#arkprofile-class), and [**ArkTribe**](arkmodule.md#arktribe-class).
 
 ### **Properties**
 
@@ -673,7 +673,7 @@ Constructor method for creating a `BoolProperty`. Can be instantiated with a val
 | Parameter Name | Type | Description |
 |------|------|-------------|
 |**value** | `bool`  | (optional) A bool that this BoolProperty's value will be set to. |
-|**stream** | `BinaryStream`  | (optional) A Binary stream that this BoolProperty can build itself from |
+|**stream** | `BinaryStream`  | (optional) A `BinaryStream` that this BoolProperty can build itself from |
 
   - **returns** a new `BoolProperty`
 
@@ -695,11 +695,11 @@ Casts value to a `bool` if it isn't one already and sets BoolProperty.value to t
 
 **_write_to_stream**(stream, array=False)
 
-**(Internal Method)** Writes this BoolProperty to the BinaryStream that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
+**(Internal Method)** Writes this BoolProperty to the `BinaryStream` that's been provided. If array is False then the entire contents of this property will be written (name, type, size, index, and value). If array is True however, then only the value will be written.
 
 | Parameter Name | Type | Description |
 |------|------|-------------|
-|**stream** | `BinaryStream`  | A BinaryStream that this property can write its structure to |
+|**stream** | `BinaryStream`  | A `BinaryStream` that this property can write its structure to |
 |**array** | `bool`  | (optional) Flag specifying whether or not this property is being written inside of an Array. |
 
   - **returns** `None`
