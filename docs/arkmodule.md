@@ -48,12 +48,12 @@ ArkProfiles describe individual characters, their visual appearance, and some pe
 | **map_name** | `str`| Name of the map this character is on, 'TheIsland' or 'TheCenter' |
 | **map_path** | `str`| Path to the map, looks like '/Game/Maps/TheIslandSubMaps/TheIsland'. Can use the [**`GameMapMap`**](arkmodule.md#gamemapmap-class) to reference these paths easier. |
 | **character** | [**`Character`**](arkmodule.md#character-class) | Wrapper around the low-level structs for character information. Recommended to use this rather than digging into the data dict |
-| **player_id** | `UInt64Property`| |
+| **player_id** | `UInt64Property`| PlayerID used by the game to refer to this player. |
 | **player_name** | `StrProperty`| Player's steam name they used when they first created this character. This value is not updated if they change their steam name |
-| **unique_id** | `UniqueNetIdRepl`| |
+| **unique_id** | `UniqueNetIdRepl`| SteamID. Also the file name for any profiles on a server. |
 | **network_address** | `StrProperty`| |
 | **first_spawned** | `BoolProperty`| True when the character has spawned for the first time |
-| **tribe_ID** | `IntProperty`| The ID belonging to the Tribe this player is in. Tribe ID can be used to fetch tribe data by looking for a tribeID.arktribe file |
+| **tribe_ID** | `IntProperty`| The ID belonging to the Tribe this player is in. Tribe ID can be used to fetch tribe data by looking for a tribeID.arktribe file. **Returns 0 if player has no tribe**. |
 | **player_version** | `IntProperty`| Always 1 |
 
 

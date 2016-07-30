@@ -6,11 +6,16 @@ extra_css:
 pages:
  - Home: 'index.md'
  - User Guide: 'userguide.md'
- - Tutorials: 'tutorials.md'
  - API Documentation:
     - arktypes module: 'arktypesmodule.md'
     - ark module: 'arkmodule.md'
     - entities module: 'entities.md'
+ - Tutorials:
+    - Tutorial Listing: 'tutorials.md'
+    - Reading an .arkprofile file: 'tutorial1.md'
+    - Editing an .arkprofile file: 'tutorial2.md'
+    - Reading an .arktribe file: 'tutorial3.md'
+    # - Most Common Hotbars: 'tutorial4.md'
  - File Format Specs: 'formats.md'
  - Contributors Guide: 'contribs.md'
  - Changelog: 'changelog.md'
