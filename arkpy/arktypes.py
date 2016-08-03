@@ -644,6 +644,7 @@ class PrimalPlayerDataStruct(BaseStruct):
         self.set('SavedNetworkAddress', StrProperty())
         self.set('PlayerName', StrProperty())
         self.set('bFirstSpawned', BoolProperty())
+        self.set('bIsSpectator', BoolProperty())
         cs = 'MyPlayerCharacterConfig'
         self.set(cs, PrimalPlayerCharacterConfigStruct())
         ss = 'MyPersistentCharacterStats'
@@ -677,6 +678,7 @@ class PrimalPlayerDataStruct(BaseStruct):
         self.data['SavedNetworkAddress']._write_to_stream(stream)
         self.data['PlayerName']._write_to_stream(stream)
         self.data['bFirstSpawned']._write_to_stream(stream)
+        self.data['bIsSpectator']._write_to_stream(stream)
         self.data['MyPlayerCharacterConfig']._write_to_stream(stream)
         self.data['MyPersistentCharacterStats']._write_to_stream(stream)
         self.data['TribeID']._write_to_stream(stream)

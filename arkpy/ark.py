@@ -364,6 +364,10 @@ class ArkProfile:
         return self.myData.data['bFirstSpawned']
 
     @property
+    def is_spectator(self):
+        return self.myData.data['bIsSpectator']
+
+    @property
     def tribe_ID(self):
         return self.myData.data['TribeID']
 

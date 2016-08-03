@@ -1,3 +1,3 @@
 # [Unreleased]
 
-No changes at this time
+ - Added bIsSpectator Default value to PrimalPlayerDataStruct, and interface property to ArkProfile

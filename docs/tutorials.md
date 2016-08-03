@@ -1,4 +1,4 @@
-# Tutorials
+# Tutorials and Examples
 
 - - -
 ### **ArkProfiles Part I: Reading and Displaying Data**
@@ -14,7 +14,7 @@ Building on the previous tutorial, ArkProfiles Part I, we'll learn how to make c
 <a href="#" class="btn btn-link icon icon-github">  View Source</a>
 - - -
 ### **ArkTribes Part I: Reading Tribe Data**
-In this tutorial, we'll learn how to read an .arktribe file and display some important information about the tribe found in that file. Then we'll take a look at the Tribe Logs, and see how we can parse those out and export the Tribe Logs elsewhere.
+In this tutorial, we'll learn how to read an .arktribe file and display some important information about the tribe found in that file.
 
 [View Tutorial](tutorial3.md)
 <a href="https://github.com/DerekRies/arkpy-examples/blob/master/example03_tribe.py" class="btn btn-link icon icon-github">  View Source</a>
